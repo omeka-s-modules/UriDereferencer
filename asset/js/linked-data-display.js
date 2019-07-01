@@ -62,7 +62,7 @@ services.push({
         </dl>`;
     },
     getMatch: function(url) {
-        return url.match(/^http?:\/\/id.loc.gov\/authorities\/subjects\/(.+)/);
+        return url.match(/^http?:\/\/id.loc.gov\/authorities\/subjects\/(.+?)(\.html)?$/);
     }
 });
 
