@@ -2,9 +2,27 @@
 
 const LinkedDataDisplay = {
     services : [],
+    /**
+     * Add linked data service.
+     *
+     * Every service should implement the following functions:
+     *   - getName() {string}: Get the name of this service
+     *   - isMatch(url) {bool}: Is the URL a match for this service?
+     *   - getEndpoint(url) {string}: Get the linked data endpoint for the URL
+     *   - getMarkup(url, text) {string}: Get the markup derived from the data
+     *
+     * @param {object} service A linked data service object
+     */
     addService: function(service) {
         this.services.push(service);
     },
+    /**
+     * Display linked data.
+     *
+     * @param {object} service The linked data service object
+     * @param {string} uri The URI
+     * @param {object} container The container element
+     */
     display: function(service, uri, container) {
         return fetch(service.getEndpoint(uri))
             .then(function(response) {
@@ -17,7 +35,7 @@ const LinkedDataDisplay = {
                 container.innerHTML = service.getMarkup(uri, text);
             })
             .catch(function(error) {
-                console.log(`Error in service "${service.name}" using URI "${uri}": ${error.message}`);
+                console.log(`Error in service "${service.getName()}" using URI "${uri}": ${error.message}`);
             });
     }
 };

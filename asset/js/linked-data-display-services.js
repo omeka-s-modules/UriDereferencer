@@ -1,7 +1,9 @@
 'use strict'
 
 LinkedDataDisplay.addService({
-    name: 'Wikidata',
+    getName: function() {
+        return 'Wikidata';
+    },
     isMatch: function(url) {
         return (null !== this.getMatch(url));
     },
@@ -27,7 +29,9 @@ LinkedDataDisplay.addService({
     }
 });
 LinkedDataDisplay.addService({
-    name: 'Library of Congress Subject Headings',
+    getName: function() {
+        return 'Library of Congress Subject Headings';
+    },
     isMatch: function(url) {
         return (null !== this.getMatch(url));
     },
@@ -61,7 +65,9 @@ LinkedDataDisplay.addService({
     }
 });
 LinkedDataDisplay.addService({
-    name: 'DBpedia',
+    getName: function() {
+        return 'DBpedia';
+    },
     isMatch: function(url) {
         return (null !== this.getMatch(url));
     },
