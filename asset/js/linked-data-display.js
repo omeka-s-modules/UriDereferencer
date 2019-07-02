@@ -17,7 +17,7 @@ const LinkedDataDisplay = {
                 container.innerHTML = service.getMarkup(uri, text);
             })
             .catch(function(error) {
-                console.log(`Error in service "${service.name}": ${error.message}`);
+                console.log(`Error in service "${service.name}" using URI "${uri}": ${error.message}`);
             });
     }
 };
