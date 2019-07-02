@@ -3,9 +3,12 @@
 const LinkedDataDisplay = {
     services : [],
     /**
-     * Add linked data service.
+     * Add a linked data service object.
      *
-     * Every service should implement the following functions:
+     * Note that services are keyed by their name. If services have duplicate
+     * names, the last service added will overwrite the previous.
+     *
+     * Every service object should implement the following functions:
      *   - getName() {string}: Get the name of this service
      *   - isMatch(url) {bool}: Is the URL a match for this service?
      *   - getEndpoint(url) {string}: Get the linked data endpoint for the URL
@@ -14,7 +17,7 @@ const LinkedDataDisplay = {
      * @param {object} service A linked data service object
      */
     addService: function(service) {
-        this.services.push(service);
+        this.services[service.getName()] = service;
     },
     /**
      * Display linked data.
@@ -42,7 +45,8 @@ const LinkedDataDisplay = {
 
 document.addEventListener('DOMContentLoaded', function(event) {
     for (let uriValue of document.getElementsByClassName('uri-value-link')) {
-        LinkedDataDisplay.services.forEach(function(service) {
+        for (let serviceName in LinkedDataDisplay.services) {
+            const service = LinkedDataDisplay.services[serviceName];
             if (service.isMatch(uriValue.href)) {
 
                 // The data markup container.
@@ -78,8 +82,9 @@ document.addEventListener('DOMContentLoaded', function(event) {
                 uriValue.parentNode.appendChild(toggleButton);
                 uriValue.parentNode.appendChild(container);
 
-                return false;
+                // Found a matching service. Move on to next uriValue.
+                break;
             }
-        });
+        }
     }
 });
