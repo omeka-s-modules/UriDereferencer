@@ -9,7 +9,7 @@ const LinkedDataDisplay = {
         return fetch(service.getEndpoint(uri))
             .then(function(response) {
                 if (!response.ok) {
-                    throw new Error(`HTTP Status ${response.status}`);
+                    throw new Error(`HTTP Error ${response.status}`);
                 }
                 return response.text();
             })
@@ -17,7 +17,7 @@ const LinkedDataDisplay = {
                 container.innerHTML = service.getMarkup(uri, text);
             })
             .catch(function(error) {
-                console.log(`Cannot fetch endpoint for service "${service.name}": ${error.message}`);
+                console.log(`Error in service "${service.name}": ${error.message}`);
             });
     }
 };
