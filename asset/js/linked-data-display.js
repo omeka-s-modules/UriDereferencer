@@ -4,6 +4,22 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 const uriValues = document.getElementsByClassName('uri-value-link');
 const services = [];
+const displayLinkedData = function(button, uri, service) {
+    console.log(button);
+    fetch(service.getEndpoint(uri))
+        .then(function(response) {
+            return response.text();
+        })
+        .then(function(text) {
+            const dataDisplay = document.createElement('div');
+            dataDisplay.className = 'linked-data-display';
+            dataDisplay.innerHTML = service.getMarkup(uri, text);
+            console.log(dataDisplay);
+            button.parentNode.appendChild(dataDisplay);
+            button.remove();
+        });
+}
+
 
 services.push({
     name: 'Wikidata',
@@ -69,16 +85,13 @@ services.push({
 for (let uriValue of uriValues) {
     services.forEach(function(service) {
         if (service.isMatch(uriValue.href)) {
-            fetch(service.getEndpoint(uriValue.href))
-                .then(function(response) {
-                    return response.text();
-                })
-                .then(function(text) {
-                    const dataDisplay = document.createElement('div');
-                    dataDisplay.className = 'linked-data-display';
-                    dataDisplay.innerHTML = service.getMarkup(uriValue.href, text);
-                    uriValue.parentNode.insertBefore(dataDisplay, uriValue.nextSibling);
-                });
+            const button = document.createElement('button');
+            button.className = 'linked-data-display-button';
+            button.innerHTML = 'more';
+            button.onclick = function() {
+                displayLinkedData(this, uriValue.href, service);
+            };
+            uriValue.parentNode.insertBefore(button, uriValue.nextSibling);
             return false;
         }
     });
