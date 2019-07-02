@@ -57,6 +57,46 @@ LinkedDataDisplay.addService({
         </dl>`;
     },
     getMatch: function(url) {
-        return url.match(/^http?:\/\/id.loc.gov\/authorities\/subjects\/(.+?)(\.html)?$/);
+        return url.match(/^http?:\/\/id\.loc\.gov\/authorities\/subjects\/(.+?)(\.html)?$/);
+    }
+});
+LinkedDataDisplay.addService({
+    name: 'DBpedia',
+    isMatch: function(url) {
+        return (null !== this.getMatch(url));
+    },
+    getEndpoint: function(url) {
+        const match = this.getMatch(url);
+        return `http://dbpedia.org/data/${match[1]}.json`;
+    },
+    getMarkup: function(url, text) {
+        const match = this.getMatch(url);
+        const json = JSON.parse(text);
+        const labels = json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#label'];
+        const comments = json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#comment'];
+        let displayLabel;
+        let displayComment;
+        const displaySubjects = [];
+        for (let label of labels) {
+            if ('en' === label['lang']) {
+                displayLabel = label['value'];
+            }
+        }
+        for (let comment of comments) {
+            if ('en' === comment['lang']) {
+                displayComment = comment['value'];
+            }
+        }
+        return `
+        <dl>
+            <dt>Label</dt>
+            <dd>${displayLabel}</dd>
+            <dt>Comment</dt>
+            <dd>${displayComment}</dd>
+        </dl>`;
+    },
+    getMatch: function(url) {
+        // Does not support Category URLs
+        return url.match(/^https?:\/\/dbpedia\.org\/page\/((?!Category:).+)$/);
     }
 });
