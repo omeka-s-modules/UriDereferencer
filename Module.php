@@ -14,7 +14,8 @@ class Module extends AbstractModule
             'view.show.before',
             function (Event $event) {
                 $view = $event->getTarget();
-                $view->headScript()->prependFile($view->assetUrl('js/linked-data-display.js', 'LinkedDataDisplay'));
+                $view->headScript()->appendFile($view->assetUrl('js/linked-data-display.js', 'LinkedDataDisplay'));
+                $view->headScript()->appendFile($view->assetUrl('js/linked-data-display-services.js', 'LinkedDataDisplay'));
             }
         );
     }
