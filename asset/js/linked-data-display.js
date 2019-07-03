@@ -16,7 +16,7 @@ const LinkedDataDisplay = {
      *
      * @param {object} service A linked data service object
      */
-    addService: function(service) {
+    addService(service) {
         this.services.set(service.getName(), service);
     },
     /**
@@ -25,7 +25,7 @@ const LinkedDataDisplay = {
      * @param {string} uri The URI
      * @return {object|false} Returns false if no service matches
      */
-    getServiceByUri: function(uri) {
+    getServiceByUri(uri) {
         for (let service of this.services.values()) {
             if (service.isMatch(uri)) {
                 return service;
@@ -39,7 +39,7 @@ const LinkedDataDisplay = {
      * @param {string} uri The URI
      * @param {object} container The container element
      */
-    display: function(uri, container) {
+    display(uri, container) {
         const service = this.getServiceByUri(uri);
         if (service) {
             fetch(service.getEndpoint(uri))
@@ -64,7 +64,7 @@ const LinkedDataDisplay = {
      *
      * @param {function} accessor Function that returns the value
      */
-    isset: function(accessor) {
+    isset(accessor) {
         try {
             return 'undefined' !== typeof accessor();
         } catch (e) {
