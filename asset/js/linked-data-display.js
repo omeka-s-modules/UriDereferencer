@@ -1,7 +1,7 @@
 'use strict'
 
 const LinkedDataDisplay = {
-    services: {},
+    services: new Map(),
     /**
      * Add a linked data service object.
      *
@@ -17,7 +17,7 @@ const LinkedDataDisplay = {
      * @param {object} service A linked data service object
      */
     addService: function(service) {
-        this.services[service.getName()] = service;
+        this.services.set(service.getName(), service);
     },
     /**
      * Get a service object by URI.
@@ -26,8 +26,7 @@ const LinkedDataDisplay = {
      * @return {object|false} Returns false if no service matches
      */
     getServiceByUri: function(uri) {
-        for (let serviceName in this.services) {
-            const service = this.services[serviceName];
+        for (let service of this.services.values()) {
             if (service.isMatch(uri)) {
                 return service;
             }
