@@ -57,6 +57,20 @@ const LinkedDataDisplay = {
                     console.log(`Error in service "${service.getName()}" using URI "${uri}": ${error.message}`);
                 });
         }
+    },
+    /**
+     * Check to see if a value is set.
+     *
+     * A utility function helpful for checking deep values in a JSON object.
+     *
+     * @param {function} accessor Function that returns the value
+     */
+    isset: function(accessor) {
+        try {
+            return 'undefined' !== typeof accessor();
+        } catch (e) {
+            return false;
+        }
     }
 };
 

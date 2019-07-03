@@ -14,8 +14,12 @@ LinkedDataDisplay.addService({
     getMarkup: function(uri, text) {
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
-        const label = json['entities'][match[1]]['labels']['en']['value'];
-        const description = json['entities'][match[1]]['descriptions']['en']['value'];
+        const label = LinkedDataDisplay.isset(() => json['entities'][match[1]]['labels']['en']['value'])
+            ? json['entities'][match[1]]['labels']['en']['value']
+            : '';
+        const description = LinkedDataDisplay.isset(() => json['entities'][match[1]]['descriptions']['en']['value'])
+            ? json['entities'][match[1]]['descriptions']['en']['value']
+            : '';
         return `
         <dl>
             <dt>Label</dt>
@@ -42,12 +46,18 @@ LinkedDataDisplay.addService({
     getMarkup: function(uri, text) {
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
-        const prefLabel = json[0]['http://www.w3.org/2004/02/skos/core#prefLabel'][0]['@value'];
-        const note = json[0]['http://www.w3.org/2004/02/skos/core#note'][0]['@value'];
+        const prefLabel = LinkedDataDisplay.isset(() => json[0]['http://www.w3.org/2004/02/skos/core#prefLabel'][0]['@value'])
+            ? json[0]['http://www.w3.org/2004/02/skos/core#prefLabel'][0]['@value']
+            : '';
+        const note = LinkedDataDisplay.isset(() => json[0]['http://www.w3.org/2004/02/skos/core#note'][0]['@value'])
+            ? json[0]['http://www.w3.org/2004/02/skos/core#note'][0]['@value']
+            : '';
         const altLabels = [];
-        for (let altLabel of json[0]['http://www.w3.org/2008/05/skos-xl#altLabel']) {
-            if (altLabel['@value']) {
-                altLabels.push(altLabel['@value']);
+        if (LinkedDataDisplay.isset(() => json[0]['http://www.w3.org/2008/05/skos-xl#altLabel'])) {
+            for (let altLabel of json[0]['http://www.w3.org/2008/05/skos-xl#altLabel']) {
+                if (altLabel['@value']) {
+                    altLabels.push(altLabel['@value']);
+                }
             }
         }
         return `
@@ -78,11 +88,14 @@ LinkedDataDisplay.addService({
     getMarkup: function(uri, text) {
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
-        const labels = json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#label'];
-        const comments = json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#comment'];
-        let displayLabel;
-        let displayComment;
-        const displaySubjects = [];
+        const labels = LinkedDataDisplay.isset(() => json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#label'])
+            ? json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#label']
+            : [];
+        const comments = LinkedDataDisplay.isset(() => json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#comment'])
+            ? json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#comment']
+            : [];
+        let displayLabel = '';
+        let displayComment = '';
         for (let label of labels) {
             if ('en' === label['lang']) {
                 displayLabel = label['value'];
