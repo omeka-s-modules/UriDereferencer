@@ -34,7 +34,7 @@ LinkedDataDisplay.addService({
 });
 LinkedDataDisplay.addService({
     getName: function() {
-        return 'Library of Congress Subject Headings';
+        return 'Library of Congress: Subject Headings';
     },
     isMatch: function(uri) {
         return (null !== this.getMatch(uri));
