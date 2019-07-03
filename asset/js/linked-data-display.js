@@ -10,9 +10,9 @@ const LinkedDataDisplay = {
      *
      * Every service object should implement the following functions:
      *   - getName() {string}: Get the name of this service
-     *   - isMatch(url) {bool}: Is the URL a match for this service?
-     *   - getEndpoint(url) {string}: Get the linked data endpoint for the URL
-     *   - getMarkup(url, text) {string}: Get the markup derived from the data
+     *   - isMatch(uri) {bool}: Is the URI a match for this service?
+     *   - getEndpoint(uri) {string}: Get the linked data endpoint for the URI
+     *   - getMarkup(uri, text) {string}: Get the markup derived from the data
      *
      * @param {object} service A linked data service object
      */

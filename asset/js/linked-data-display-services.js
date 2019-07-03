@@ -4,15 +4,15 @@ LinkedDataDisplay.addService({
     getName: function() {
         return 'Wikidata';
     },
-    isMatch: function(url) {
-        return (null !== this.getMatch(url));
+    isMatch: function(uri) {
+        return (null !== this.getMatch(uri));
     },
-    getEndpoint: function(url) {
-        const match = this.getMatch(url);
+    getEndpoint: function(uri) {
+        const match = this.getMatch(uri);
         return `https://www.wikidata.org/wiki/Special:EntityData/${match[1]}.json`;
     },
-    getMarkup: function(url, text) {
-        const match = this.getMatch(url);
+    getMarkup: function(uri, text) {
+        const match = this.getMatch(uri);
         const json = JSON.parse(text);
         const label = json['entities'][match[1]]['labels']['en']['value'];
         const description = json['entities'][match[1]]['descriptions']['en']['value'];
@@ -24,23 +24,23 @@ LinkedDataDisplay.addService({
             <dd>${description}</dd>
         </dl>`;
     },
-    getMatch: function(url) {
-        return url.match(/^https?:\/\/www\.wikidata\.org\/wiki\/(Q.+)/);
+    getMatch: function(uri) {
+        return uri.match(/^https?:\/\/www\.wikidata\.org\/wiki\/(Q.+)/);
     }
 });
 LinkedDataDisplay.addService({
     getName: function() {
         return 'Library of Congress Subject Headings';
     },
-    isMatch: function(url) {
-        return (null !== this.getMatch(url));
+    isMatch: function(uri) {
+        return (null !== this.getMatch(uri));
     },
-    getEndpoint: function(url) {
-        const match = this.getMatch(url);
+    getEndpoint: function(uri) {
+        const match = this.getMatch(uri);
         return `http://id.loc.gov/authorities/subjects/${match[1]}.skos.json`;
     },
-    getMarkup: function(url, text) {
-        const match = this.getMatch(url);
+    getMarkup: function(uri, text) {
+        const match = this.getMatch(uri);
         const json = JSON.parse(text);
         const prefLabel = json[0]['http://www.w3.org/2004/02/skos/core#prefLabel'][0]['@value'];
         const note = json[0]['http://www.w3.org/2004/02/skos/core#note'][0]['@value'];
@@ -60,23 +60,23 @@ LinkedDataDisplay.addService({
             <dd>${altLabels.join('; ')}</dd>
         </dl>`;
     },
-    getMatch: function(url) {
-        return url.match(/^http?:\/\/id\.loc\.gov\/authorities\/subjects\/(.+?)(\.html)?$/);
+    getMatch: function(uri) {
+        return uri.match(/^http?:\/\/id\.loc\.gov\/authorities\/subjects\/(.+?)(\.html)?$/);
     }
 });
 LinkedDataDisplay.addService({
     getName: function() {
         return 'DBpedia';
     },
-    isMatch: function(url) {
-        return (null !== this.getMatch(url));
+    isMatch: function(uri) {
+        return (null !== this.getMatch(uri));
     },
-    getEndpoint: function(url) {
-        const match = this.getMatch(url);
+    getEndpoint: function(uri) {
+        const match = this.getMatch(uri);
         return `http://dbpedia.org/data/${match[1]}.json`;
     },
-    getMarkup: function(url, text) {
-        const match = this.getMatch(url);
+    getMarkup: function(uri, text) {
+        const match = this.getMatch(uri);
         const json = JSON.parse(text);
         const labels = json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#label'];
         const comments = json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#comment'];
@@ -101,8 +101,8 @@ LinkedDataDisplay.addService({
             <dd>${displayComment}</dd>
         </dl>`;
     },
-    getMatch: function(url) {
+    getMatch: function(uri) {
         // Does not support Category URLs
-        return url.match(/^https?:\/\/dbpedia\.org\/page\/((?!Category:).+)$/);
+        return uri.match(/^https?:\/\/dbpedia\.org\/page\/((?!Category:).+)$/);
     }
 });
