@@ -2,6 +2,7 @@
 
 LinkedDataDisplay.addService({
     getName() {
+        // https://www.wikidata.org/wiki/Wikidata:Data_access#Linked_Data_interface
         return 'Wikidata';
     },
     isMatch(uri) {
@@ -69,6 +70,7 @@ LinkedDataDisplay.addService({
         'preservation', // we get the rest for free!
     ],
     getName() {
+        // http://id.loc.gov/
         return 'Library of Congress Authorities and Vocabularies';
     },
     isMatch(uri) {
@@ -122,6 +124,7 @@ LinkedDataDisplay.addService({
 });
 LinkedDataDisplay.addService({
     getName() {
+        // https://wiki.dbpedia.org/OnlineAccess#2%20Linked%20Data
         return 'DBpedia';
     },
     isMatch(uri) {
@@ -162,6 +165,7 @@ LinkedDataDisplay.addService({
 });
 LinkedDataDisplay.addService({
     getName() {
+        // http://www.getty.edu/research/tools/vocabularies/lod/
         return 'Getty Vocabularies (AAT, TGN, ULAN)';
     },
     isMatch(uri) {
