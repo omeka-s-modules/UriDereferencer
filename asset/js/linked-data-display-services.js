@@ -14,19 +14,18 @@ LinkedDataDisplay.addService({
     getMarkup: function(uri, text) {
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
-        const label = LinkedDataDisplay.isset(() => json['entities'][match[1]]['labels']['en']['value'])
-            ? json['entities'][match[1]]['labels']['en']['value']
-            : '';
-        const description = LinkedDataDisplay.isset(() => json['entities'][match[1]]['descriptions']['en']['value'])
-            ? json['entities'][match[1]]['descriptions']['en']['value']
-            : '';
-        return `
-        <dl>
-            <dt>Label</dt>
-            <dd>${label}</dd>
-            <dt>Description</dt>
-            <dd>${description}</dd>
-        </dl>`;
+        const data = new Map();
+        if (LinkedDataDisplay.isset(() => json['entities'][match[1]]['labels']['en']['value'])) {
+            data.set('Label', json['entities'][match[1]]['labels']['en']['value']);
+        }
+        if (LinkedDataDisplay.isset(() => json['entities'][match[1]]['descriptions']['en']['value'])) {
+            data.set('Description', json['entities'][match[1]]['descriptions']['en']['value']);
+        }
+        let dataMarkup = '';
+        for (let [key, value] of data) {
+            dataMarkup += `<dt>${key}</dt><dd>${value}</dd>`
+        }
+        return `<dl>${dataMarkup}</dl>`;
     },
     getMatch: function(uri) {
         return uri.match(/^https?:\/\/www\.wikidata\.org\/wiki\/(Q.+)/);
@@ -135,31 +134,26 @@ LinkedDataDisplay.addService({
     getMarkup: function(uri, text) {
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
-        const labels = LinkedDataDisplay.isset(() => json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#label'])
-            ? json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#label']
-            : [];
-        const comments = LinkedDataDisplay.isset(() => json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#comment'])
-            ? json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#comment']
-            : [];
-        let displayLabel = '';
-        let displayComment = '';
-        for (let label of labels) {
-            if ('en' === label['lang']) {
-                displayLabel = label['value'];
+        const data = new Map();
+        if (LinkedDataDisplay.isset(() => json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#label'])) {
+            for (let label of json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#label']) {
+                if ('en' === label['lang']) {
+                    data.set('Label', label['value']);
+                }
             }
         }
-        for (let comment of comments) {
-            if ('en' === comment['lang']) {
-                displayComment = comment['value'];
+        if (LinkedDataDisplay.isset(() => json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#comment'])) {
+            for (let comment of json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#comment']) {
+                if ('en' === comment['lang']) {
+                    data.set('Comment', comment['value']);
+                }
             }
         }
-        return `
-        <dl>
-            <dt>Label</dt>
-            <dd>${displayLabel}</dd>
-            <dt>Comment</dt>
-            <dd>${displayComment}</dd>
-        </dl>`;
+        let dataMarkup = '';
+        for (let [key, value] of data) {
+            dataMarkup += `<dt>${key}</dt><dd>${value}</dd>`
+        }
+        return `<dl>${dataMarkup}</dl>`;
     },
     getMatch: function(uri) {
         // Does not support Category URLs
@@ -194,19 +188,18 @@ LinkedDataDisplay.addService({
     getMarkup: function(uri, text) {
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
-        const term = LinkedDataDisplay.isset(() => json['results']['bindings'][0]['Term']['value'])
-            ? json['results']['bindings'][0]['Term']['value']
-            : '';
-        const scopeNote = LinkedDataDisplay.isset(() => json['results']['bindings'][0]['ScopeNote']['value'])
-            ? json['results']['bindings'][0]['ScopeNote']['value']
-            : '';
-        return `
-        <dl>
-            <dt>Term</dt>
-            <dd>${term}</dd>
-            <dt>Scope note</dt>
-            <dd>${scopeNote}</dd>
-        </dl>`;
+        const data = new Map();
+        if (LinkedDataDisplay.isset(() => json['results']['bindings'][0]['Term']['value'])) {
+            data.set('Term', json['results']['bindings'][0]['Term']['value']);
+        }
+        if (LinkedDataDisplay.isset(() => json['results']['bindings'][0]['ScopeNote']['value'])) {
+            data.set('Scope note', json['results']['bindings'][0]['ScopeNote']['value']);
+        }
+        let dataMarkup = '';
+        for (let [key, value] of data) {
+            dataMarkup += `<dt>${key}</dt><dd>${value}</dd>`
+        }
+        return `<dl>${dataMarkup}</dl>`;
     },
     getMatch: function(uri) {
         return uri.match(/^https?:\/\/vocab\.getty\.edu\/(aat|tgn|ulan)\/(.+)$/);
