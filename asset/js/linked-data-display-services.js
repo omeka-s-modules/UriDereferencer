@@ -92,12 +92,6 @@ LinkedDataDisplay.addService({
         if (LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2004/02/skos/core#prefLabel'][0]['@value'])) {
             data.set('Pref label', json[index]['http://www.w3.org/2004/02/skos/core#prefLabel'][0]['@value']);
         }
-        if (LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2004/02/skos/core#definition'][0]['@value'])) {
-            data.set('Definition', json[index]['http://www.w3.org/2004/02/skos/core#definition'][0]['@value']);
-        }
-        if (LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2004/02/skos/core#note'][0]['@value'])) {
-            data.set('Note', json[index]['http://www.w3.org/2004/02/skos/core#note'][0]['@value']);
-        }
         const altLabels = [];
         if (LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2008/05/skos-xl#altLabel'])) {
             for (let altLabel of json[index]['http://www.w3.org/2008/05/skos-xl#altLabel']) {
@@ -108,6 +102,12 @@ LinkedDataDisplay.addService({
             if (altLabels) {
                 data.set('Alt Label', altLabels.join('; '));
             }
+        }
+        if (LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2004/02/skos/core#definition'][0]['@value'])) {
+            data.set('Definition', json[index]['http://www.w3.org/2004/02/skos/core#definition'][0]['@value']);
+        }
+        if (LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2004/02/skos/core#note'][0]['@value'])) {
+            data.set('Note', json[index]['http://www.w3.org/2004/02/skos/core#note'][0]['@value']);
         }
         let dataMarkup = '';
         for (let [key, value] of data) {
