@@ -33,30 +33,72 @@ LinkedDataDisplay.addService({
     }
 });
 LinkedDataDisplay.addService({
+    authorities: [
+        // Subjects, Thesauri, Classification
+        'subjects', 'classification', 'childrensSubjects', 'performanceMediums',
+        // Agents
+        'names',
+        // Genre
+        'genreForms',
+        // Cataloging
+        'demographicTerms',
+    ],
+    vocabularies: [
+        // Subjects, Thesauri, Classification
+        'graphicMaterials', 'ethnographicTerms', 'subjectSchemes',
+        'classSchemes',
+        // Agents
+        'organizations',
+        // Genre
+        'marcgt', 'genreFormSchemes',
+        // Languages
+        'languages', 'iso639-1', 'iso639-2', 'iso639-5',
+        // Geographic
+        'countries', 'geographicAreas',
+        // Cataloging
+        'maspect', 'marcauthen', 'mbroadstd', 'carriers', 'mcolor',
+        'contentTypes', 'descriptionConventions', 'mcapturestorage', 'menclvl',
+        'mfont', 'mfiletype', 'mgeneration', 'mgroove', 'mstatus', 'millus',
+        'maudience', 'issuance', 'mlayout', 'mediaTypes', 'mmusnotation',
+        'mmusicformat', 'mplayback', 'mplayspeed', 'mpolarity', 'mpresformat',
+        'mproduction', 'mprojection', 'frequencies', 'mrecmedium', 'mrectype',
+        'mreductionratio', 'mregencoding', 'relators', 'mrelief',
+        'resourceComponents', 'mscale', 'mscript', 'msoundcontent',
+        'mspecplayback', 'msupplcont', 'mmaterial', 'mtactile', 'mtapeconfig',
+        'mtechnique', 'mvidformat',
+        // Preservation Vocabularies
+        'preservation', // we get the rest for free!
+    ],
     getName: function() {
-        return 'Library of Congress Authorities';
+        return 'Library of Congress Authorities and Vocabularies';
     },
     isMatch: function(uri) {
         return (null !== this.getMatch(uri));
     },
     getEndpoint: function(uri) {
         const match = this.getMatch(uri);
-        return `http://id.loc.gov/authorities/${match[1]}/${match[2]}.skos.json`;
+        return `http://id.loc.gov/${match[1]}/${match[2]}/${match[3]}.skos.json`;
     },
     getMarkup: function(uri, text) {
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
-        // The relevant data is indexed by the authority URI set on the @id.
-        uri = uri.replace(/\.html$/, '');
         const index = json.findIndex(function(element) {
-            return uri == element['@id'];
+            // The relevant data is indexed by the URI set on the @id.
+            return uri.replace(/\.html$/, '') == element['@id'];
         });
-        const prefLabel = LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2004/02/skos/core#prefLabel'][0]['@value'])
-            ? json[index]['http://www.w3.org/2004/02/skos/core#prefLabel'][0]['@value']
-            : '';
-        const note = LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2004/02/skos/core#note'][0]['@value'])
-            ? json[index]['http://www.w3.org/2004/02/skos/core#note'][0]['@value']
-            : '';
+        const data = new Map();
+        if (LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2000/01/rdf-schema#label'][0]['@value'])) {
+            data.set('Label', json[index]['http://www.w3.org/2000/01/rdf-schema#label'][0]['@value']);
+        }
+        if (LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2004/02/skos/core#prefLabel'][0]['@value'])) {
+            data.set('Pref label', json[index]['http://www.w3.org/2004/02/skos/core#prefLabel'][0]['@value']);
+        }
+        if (LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2004/02/skos/core#definition'][0]['@value'])) {
+            data.set('Definition', json[index]['http://www.w3.org/2004/02/skos/core#definition'][0]['@value']);
+        }
+        if (LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2004/02/skos/core#note'][0]['@value'])) {
+            data.set('Note', json[index]['http://www.w3.org/2004/02/skos/core#note'][0]['@value']);
+        }
         const altLabels = [];
         if (LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2008/05/skos-xl#altLabel'])) {
             for (let altLabel of json[index]['http://www.w3.org/2008/05/skos-xl#altLabel']) {
@@ -64,19 +106,19 @@ LinkedDataDisplay.addService({
                     altLabels.push(altLabel['@value']);
                 }
             }
+            if (altLabels) {
+                data.set('Alt Label', altLabels.join('; '));
+            }
         }
-        return `
-        <dl>
-            <dt>Label</dt>
-            <dd>${prefLabel}</dd>
-            <dt>Alt labels</dt>
-            <dd>${altLabels.join('; ')}</dd>
-            <dt>Note</dt>
-            <dd>${note}</dd>
-        </dl>`;
+        let dataMarkup = '';
+        for (let [key, value] of data) {
+            dataMarkup += `<dt>${key}</dt><dd>${value}</dd>`
+        }
+        return `<dl>${dataMarkup}</dl>`;
     },
     getMatch: function(uri) {
-        return uri.match(/^http?:\/\/id\.loc\.gov\/authorities\/(subjects|names|childrensSubjects|performanceMediums|classification|genreForms|demographicTerms)\/(.+?)(\.html)?$/);
+        const re = new RegExp(`^http?:\/\/id\.loc\.gov\/(authorities|vocabulary)\/(${this.authorities.join('|')}|${this.vocabularies.join('|')})\/(.+?)(\.html)?$`);
+        return uri.match(re);
     }
 });
 LinkedDataDisplay.addService({
