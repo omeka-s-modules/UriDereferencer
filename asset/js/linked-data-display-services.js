@@ -34,27 +34,32 @@ LinkedDataDisplay.addService({
 });
 LinkedDataDisplay.addService({
     getName: function() {
-        return 'Library of Congress: Subject Headings';
+        return 'Library of Congress Authorities';
     },
     isMatch: function(uri) {
         return (null !== this.getMatch(uri));
     },
     getEndpoint: function(uri) {
         const match = this.getMatch(uri);
-        return `http://id.loc.gov/authorities/subjects/${match[1]}.skos.json`;
+        return `http://id.loc.gov/authorities/${match[1]}/${match[2]}.skos.json`;
     },
     getMarkup: function(uri, text) {
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
-        const prefLabel = LinkedDataDisplay.isset(() => json[0]['http://www.w3.org/2004/02/skos/core#prefLabel'][0]['@value'])
-            ? json[0]['http://www.w3.org/2004/02/skos/core#prefLabel'][0]['@value']
+        // The relevant data is indexed by the authority URI set on the @id.
+        uri = uri.replace(/\.html$/, '');
+        const index = json.findIndex(function(element) {
+            return uri == element['@id'];
+        });
+        const prefLabel = LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2004/02/skos/core#prefLabel'][0]['@value'])
+            ? json[index]['http://www.w3.org/2004/02/skos/core#prefLabel'][0]['@value']
             : '';
-        const note = LinkedDataDisplay.isset(() => json[0]['http://www.w3.org/2004/02/skos/core#note'][0]['@value'])
-            ? json[0]['http://www.w3.org/2004/02/skos/core#note'][0]['@value']
+        const note = LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2004/02/skos/core#note'][0]['@value'])
+            ? json[index]['http://www.w3.org/2004/02/skos/core#note'][0]['@value']
             : '';
         const altLabels = [];
-        if (LinkedDataDisplay.isset(() => json[0]['http://www.w3.org/2008/05/skos-xl#altLabel'])) {
-            for (let altLabel of json[0]['http://www.w3.org/2008/05/skos-xl#altLabel']) {
+        if (LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2008/05/skos-xl#altLabel'])) {
+            for (let altLabel of json[index]['http://www.w3.org/2008/05/skos-xl#altLabel']) {
                 if (altLabel['@value']) {
                     altLabels.push(altLabel['@value']);
                 }
@@ -64,14 +69,14 @@ LinkedDataDisplay.addService({
         <dl>
             <dt>Label</dt>
             <dd>${prefLabel}</dd>
-            <dt>Note</dt>
-            <dd>${note}</dd>
             <dt>Alt labels</dt>
             <dd>${altLabels.join('; ')}</dd>
+            <dt>Note</dt>
+            <dd>${note}</dd>
         </dl>`;
     },
     getMatch: function(uri) {
-        return uri.match(/^http?:\/\/id\.loc\.gov\/authorities\/subjects\/(.+?)(\.html)?$/);
+        return uri.match(/^http?:\/\/id\.loc\.gov\/authorities\/(subjects|names|childrensSubjects|performanceMediums|classification|genreForms|demographicTerms)\/(.+?)(\.html)?$/);
     }
 });
 LinkedDataDisplay.addService({
