@@ -119,3 +119,49 @@ LinkedDataDisplay.addService({
         return uri.match(/^https?:\/\/dbpedia\.org\/page\/((?!Category:).+)$/);
     }
 });
+LinkedDataDisplay.addService({
+    getName: function() {
+        return 'Getty Vocabularies (AAT, TGN, ULAN)';
+    },
+    isMatch: function(uri) {
+        return (null !== this.getMatch(uri));
+    },
+    getEndpoint: function(uri) {
+        // Note that Getty doesn't enable cross-origin resource sharing (CORS),
+        // so we can't directly fetch the JSON representations. Use the SPARQL
+        // endpoint instead.
+        const match = this.getMatch(uri);
+        const sparql = `
+        SELECT ?Subject ?Term ?ScopeNote {
+            ?Subject a skos:Concept ;
+            skos:inScheme ${match[1]}: ;
+            dc:identifier "${match[2]}" ;
+            skosxl:prefLabel [xl:literalForm ?Term] .
+            OPTIONAL {?Subject skos:scopeNote [
+                dct:language gvp_lang:en;
+                rdf:value ?ScopeNote]
+            }
+        }`;
+        return `http://vocab.getty.edu/sparql.json?query=${encodeURIComponent(sparql)}`;
+    },
+    getMarkup: function(uri, text) {
+        const match = this.getMatch(uri);
+        const json = JSON.parse(text);
+        const term = LinkedDataDisplay.isset(() => json['results']['bindings'][0]['Term']['value'])
+            ? json['results']['bindings'][0]['Term']['value']
+            : '';
+        const scopeNote = LinkedDataDisplay.isset(() => json['results']['bindings'][0]['ScopeNote']['value'])
+            ? json['results']['bindings'][0]['ScopeNote']['value']
+            : '';
+        return `
+        <dl>
+            <dt>Term</dt>
+            <dd>${term}</dd>
+            <dt>Scope note</dt>
+            <dd>${scopeNote}</dd>
+        </dl>`;
+    },
+    getMatch: function(uri) {
+        return uri.match(/^https?:\/\/vocab\.getty\.edu\/(aat|tgn|ulan)\/(.+)$/);
+    }
+});
