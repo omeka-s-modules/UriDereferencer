@@ -1,17 +1,17 @@
 'use strict'
 
 LinkedDataDisplay.addService({
-    getName: function() {
+    getName() {
         return 'Wikidata';
     },
-    isMatch: function(uri) {
+    isMatch(uri) {
         return (null !== this.getMatch(uri));
     },
-    getEndpoint: function(uri) {
+    getEndpoint(uri) {
         const match = this.getMatch(uri);
         return `https://www.wikidata.org/wiki/Special:EntityData/${match[1]}.json`;
     },
-    getMarkup: function(uri, text) {
+    getMarkup(uri, text) {
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
         const data = new Map();
@@ -27,7 +27,7 @@ LinkedDataDisplay.addService({
         }
         return `<dl>${dataMarkup}</dl>`;
     },
-    getMatch: function(uri) {
+    getMatch(uri) {
         return uri.match(/^https?:\/\/www\.wikidata\.org\/wiki\/(Q.+)/);
     }
 });
@@ -68,17 +68,17 @@ LinkedDataDisplay.addService({
         // Preservation Vocabularies
         'preservation', // we get the rest for free!
     ],
-    getName: function() {
+    getName() {
         return 'Library of Congress Authorities and Vocabularies';
     },
-    isMatch: function(uri) {
+    isMatch(uri) {
         return (null !== this.getMatch(uri));
     },
-    getEndpoint: function(uri) {
+    getEndpoint(uri) {
         const match = this.getMatch(uri);
         return `http://id.loc.gov/${match[1]}/${match[2]}/${match[3]}.skos.json`;
     },
-    getMarkup: function(uri, text) {
+    getMarkup(uri, text) {
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
         const index = json.findIndex(function(element) {
@@ -115,23 +115,23 @@ LinkedDataDisplay.addService({
         }
         return `<dl>${dataMarkup}</dl>`;
     },
-    getMatch: function(uri) {
+    getMatch(uri) {
         const re = new RegExp(`^http?:\/\/id\.loc\.gov\/(authorities|vocabulary)\/(${this.authorities.join('|')}|${this.vocabularies.join('|')})\/(.+?)(\.html)?$`);
         return uri.match(re);
     }
 });
 LinkedDataDisplay.addService({
-    getName: function() {
+    getName() {
         return 'DBpedia';
     },
-    isMatch: function(uri) {
+    isMatch(uri) {
         return (null !== this.getMatch(uri));
     },
-    getEndpoint: function(uri) {
+    getEndpoint(uri) {
         const match = this.getMatch(uri);
         return `http://dbpedia.org/data/${match[1]}.json`;
     },
-    getMarkup: function(uri, text) {
+    getMarkup(uri, text) {
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
         const data = new Map();
@@ -155,19 +155,19 @@ LinkedDataDisplay.addService({
         }
         return `<dl>${dataMarkup}</dl>`;
     },
-    getMatch: function(uri) {
+    getMatch(uri) {
         // Does not support Category URLs
         return uri.match(/^https?:\/\/dbpedia\.org\/page\/((?!Category:).+)$/);
     }
 });
 LinkedDataDisplay.addService({
-    getName: function() {
+    getName() {
         return 'Getty Vocabularies (AAT, TGN, ULAN)';
     },
-    isMatch: function(uri) {
+    isMatch(uri) {
         return (null !== this.getMatch(uri));
     },
-    getEndpoint: function(uri) {
+    getEndpoint(uri) {
         // Note that Getty doesn't enable cross-origin resource sharing (CORS),
         // so we can't directly fetch the JSON representations. Use the SPARQL
         // endpoint instead.
@@ -185,7 +185,7 @@ LinkedDataDisplay.addService({
         }`;
         return `http://vocab.getty.edu/sparql.json?query=${encodeURIComponent(sparql)}`;
     },
-    getMarkup: function(uri, text) {
+    getMarkup(uri, text) {
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
         const data = new Map();
@@ -201,7 +201,7 @@ LinkedDataDisplay.addService({
         }
         return `<dl>${dataMarkup}</dl>`;
     },
-    getMatch: function(uri) {
+    getMatch(uri) {
         return uri.match(/^https?:\/\/vocab\.getty\.edu\/(aat|tgn|ulan)\/(.+)$/);
     }
 });
