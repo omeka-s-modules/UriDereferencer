@@ -34,27 +34,24 @@ const LinkedDataDisplay = {
         return false;
     },
     /**
-     * Display linked data.
+     * Get linked data markup via a URI and set it to a container element.
      *
      * @param {string} uri The URI
-     * @param {object} container The container element
+     * @param {Element} container The container element
      */
-    display(uri, container) {
+    async display(uri, container) {
         const service = this.getServiceByUri(uri);
         if (service) {
-            fetch(service.getEndpoint(uri))
-                .then(function(response) {
-                    if (!response.ok) {
-                        throw new Error(`HTTP Error ${response.status}`);
-                    }
-                    return response.text();
-                })
-                .then(function(text) {
-                    container.innerHTML = service.getMarkup(uri, text);
-                })
-                .catch(function(error) {
-                    console.log(`Error in service "${service.getName()}" using URI "${uri}": ${error.message}`);
-                });
+            try {
+                const response = await fetch(service.getEndpoint(uri));
+                if (!response.ok) {
+                    throw new Error(`HTTP Error ${response.status}`);
+                }
+                const text = await response.text();
+                container.innerHTML = service.getMarkup(uri, text);
+            } catch (error) {
+                console.log(`Error in service "${service.getName()}" using URI "${uri}": ${error.message}`);
+            }
         }
     },
     /**
