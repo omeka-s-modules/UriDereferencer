@@ -1,6 +1,9 @@
 'use strict'
 
-const LinkedDataDisplay = {
+/**
+ * Use to dereference a URI using registered linked data services.
+ */
+const UriDereferencer = {
     services: new Map(),
     /**
      * Add a linked data service object.
@@ -34,12 +37,12 @@ const LinkedDataDisplay = {
         return false;
     },
     /**
-     * Get linked data markup via a URI and set it to a container element.
+     * Dereference a URI and set the data markup to a container element.
      *
      * @param {string} uri The URI
      * @param {Element} container The container element
      */
-    async display(uri, container) {
+    async dereference(uri, container) {
         const service = this.getServiceByUri(uri);
         if (service) {
             try {
@@ -72,7 +75,7 @@ const LinkedDataDisplay = {
 
 document.addEventListener('DOMContentLoaded', function(event) {
     for (let uriValue of document.getElementsByClassName('uri-value-link')) {
-        if (LinkedDataDisplay.getServiceByUri(uriValue.href)) {
+        if (UriDereferencer.getServiceByUri(uriValue.href)) {
             // The data markup container.
             const container = document.createElement('div');
             container.className = 'linked-data-display';
@@ -97,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
             fetchButton.className = 'linked-data-display-fetch';
             fetchButton.innerHTML = '+';
             fetchButton.onclick = function() {
-                LinkedDataDisplay.display(uriValue.href, container);
+                UriDereferencer.dereference(uriValue.href, container);
                 toggleButton.style.display = 'inline';
                 this.remove();
             };

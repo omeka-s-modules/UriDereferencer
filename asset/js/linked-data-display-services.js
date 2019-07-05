@@ -1,6 +1,6 @@
 'use strict'
 
-LinkedDataDisplay.addService({
+UriDereferencer.addService({
     getName() {
         // https://www.wikidata.org/wiki/Wikidata:Data_access#Linked_Data_interface
         return 'Wikidata';
@@ -16,10 +16,10 @@ LinkedDataDisplay.addService({
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
         const data = new Map();
-        if (LinkedDataDisplay.isset(() => json['entities'][match[1]]['labels']['en']['value'])) {
+        if (UriDereferencer.isset(() => json['entities'][match[1]]['labels']['en']['value'])) {
             data.set('Label', json['entities'][match[1]]['labels']['en']['value']);
         }
-        if (LinkedDataDisplay.isset(() => json['entities'][match[1]]['descriptions']['en']['value'])) {
+        if (UriDereferencer.isset(() => json['entities'][match[1]]['descriptions']['en']['value'])) {
             data.set('Description', json['entities'][match[1]]['descriptions']['en']['value']);
         }
         let dataMarkup = '';
@@ -32,7 +32,7 @@ LinkedDataDisplay.addService({
         return uri.match(/^https?:\/\/www\.wikidata\.org\/wiki\/(Q.+)/);
     }
 });
-LinkedDataDisplay.addService({
+UriDereferencer.addService({
     authorities: [
         // Subjects, Thesauri, Classification
         'subjects', 'classification', 'childrensSubjects', 'performanceMediums',
@@ -88,14 +88,14 @@ LinkedDataDisplay.addService({
             return uri.replace(/\.html$/, '') == element['@id'];
         });
         const data = new Map();
-        if (LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2000/01/rdf-schema#label'][0]['@value'])) {
+        if (UriDereferencer.isset(() => json[index]['http://www.w3.org/2000/01/rdf-schema#label'][0]['@value'])) {
             data.set('Label', json[index]['http://www.w3.org/2000/01/rdf-schema#label'][0]['@value']);
         }
-        if (LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2004/02/skos/core#prefLabel'][0]['@value'])) {
+        if (UriDereferencer.isset(() => json[index]['http://www.w3.org/2004/02/skos/core#prefLabel'][0]['@value'])) {
             data.set('Pref label', json[index]['http://www.w3.org/2004/02/skos/core#prefLabel'][0]['@value']);
         }
         const altLabels = [];
-        if (LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2008/05/skos-xl#altLabel'])) {
+        if (UriDereferencer.isset(() => json[index]['http://www.w3.org/2008/05/skos-xl#altLabel'])) {
             for (let altLabel of json[index]['http://www.w3.org/2008/05/skos-xl#altLabel']) {
                 if (altLabel['@value']) {
                     altLabels.push(altLabel['@value']);
@@ -105,10 +105,10 @@ LinkedDataDisplay.addService({
                 data.set('Alt Label', altLabels.join('; '));
             }
         }
-        if (LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2004/02/skos/core#definition'][0]['@value'])) {
+        if (UriDereferencer.isset(() => json[index]['http://www.w3.org/2004/02/skos/core#definition'][0]['@value'])) {
             data.set('Definition', json[index]['http://www.w3.org/2004/02/skos/core#definition'][0]['@value']);
         }
-        if (LinkedDataDisplay.isset(() => json[index]['http://www.w3.org/2004/02/skos/core#note'][0]['@value'])) {
+        if (UriDereferencer.isset(() => json[index]['http://www.w3.org/2004/02/skos/core#note'][0]['@value'])) {
             data.set('Note', json[index]['http://www.w3.org/2004/02/skos/core#note'][0]['@value']);
         }
         let dataMarkup = '';
@@ -122,7 +122,7 @@ LinkedDataDisplay.addService({
         return uri.match(re);
     }
 });
-LinkedDataDisplay.addService({
+UriDereferencer.addService({
     getName() {
         // https://wiki.dbpedia.org/OnlineAccess#2%20Linked%20Data
         return 'DBpedia';
@@ -138,14 +138,14 @@ LinkedDataDisplay.addService({
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
         const data = new Map();
-        if (LinkedDataDisplay.isset(() => json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#label'])) {
+        if (UriDereferencer.isset(() => json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#label'])) {
             for (let label of json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#label']) {
                 if ('en' === label['lang']) {
                     data.set('Label', label['value']);
                 }
             }
         }
-        if (LinkedDataDisplay.isset(() => json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#comment'])) {
+        if (UriDereferencer.isset(() => json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#comment'])) {
             for (let comment of json[`http://dbpedia.org/resource/${match[1]}`]['http://www.w3.org/2000/01/rdf-schema#comment']) {
                 if ('en' === comment['lang']) {
                     data.set('Comment', comment['value']);
@@ -163,7 +163,7 @@ LinkedDataDisplay.addService({
         return uri.match(/^https?:\/\/dbpedia\.org\/page\/((?!Category:).+)$/);
     }
 });
-LinkedDataDisplay.addService({
+UriDereferencer.addService({
     getName() {
         // http://www.getty.edu/research/tools/vocabularies/lod/
         return 'Getty Vocabularies (AAT, TGN, ULAN)';
@@ -193,10 +193,10 @@ LinkedDataDisplay.addService({
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
         const data = new Map();
-        if (LinkedDataDisplay.isset(() => json['results']['bindings'][0]['Term']['value'])) {
+        if (UriDereferencer.isset(() => json['results']['bindings'][0]['Term']['value'])) {
             data.set('Term', json['results']['bindings'][0]['Term']['value']);
         }
-        if (LinkedDataDisplay.isset(() => json['results']['bindings'][0]['ScopeNote']['value'])) {
+        if (UriDereferencer.isset(() => json['results']['bindings'][0]['ScopeNote']['value'])) {
             data.set('Scope note', json['results']['bindings'][0]['ScopeNote']['value']);
         }
         let dataMarkup = '';
