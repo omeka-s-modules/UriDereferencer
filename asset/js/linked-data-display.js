@@ -37,12 +37,12 @@ const UriDereferencer = {
         return false;
     },
     /**
-     * Dereference a URI and set the data markup to a container element.
+     * Dereference a URI and return the linked data markup.
      *
      * @param {string} uri The URI
-     * @param {Element} container The container element
+     * @return {Promise} A promise to return markup
      */
-    async dereference(uri, container) {
+    async dereference(uri) {
         const service = this.getServiceByUri(uri);
         if (service) {
             try {
@@ -50,8 +50,7 @@ const UriDereferencer = {
                 if (!response.ok) {
                     throw new Error(`HTTP Error ${response.status}`);
                 }
-                const text = await response.text();
-                container.innerHTML = service.getMarkup(uri, text);
+                return service.getMarkup(uri, await response.text());
             } catch (error) {
                 console.log(`Error in service "${service.getName()}" using URI "${uri}": ${error.message}`);
             }
@@ -99,10 +98,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
             const fetchButton = document.createElement('button');
             fetchButton.className = 'linked-data-display-fetch';
             fetchButton.innerHTML = '+';
-            fetchButton.onclick = function() {
-                UriDereferencer.dereference(uriValue.href, container);
-                toggleButton.style.display = 'inline';
+            fetchButton.onclick = async function() {
+                container.innerHTML = await UriDereferencer.dereference(uriValue.href);
                 this.remove();
+                toggleButton.style.display = 'inline';
             };
 
             uriValue.parentNode.appendChild(fetchButton);
