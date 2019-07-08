@@ -1,3 +1,3 @@
-# LinkedDataDisplay
+# URI Dereferencer
 
-Display linked data in real time when viewing resources.
+Dereferences URIs when viewing items, media, and item sets.

@@ -77,11 +77,11 @@ document.addEventListener('DOMContentLoaded', function(event) {
         if (UriDereferencer.getServiceByUri(uriValue.href)) {
             // The data markup container.
             const container = document.createElement('div');
-            container.className = 'linked-data-display';
+            container.className = 'uri-dereferencer-markup';
 
             // The toggle button.
             const toggleButton = document.createElement('button');
-            toggleButton.className = 'linked-data-display-more-less';
+            toggleButton.className = 'uri-dereferencer-toggle';
             toggleButton.innerHTML = '-';
             toggleButton.style.display = 'none';
             toggleButton.onclick = function() {
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
             // The fetch button.
             const fetchButton = document.createElement('button');
-            fetchButton.className = 'linked-data-display-fetch';
+            fetchButton.className = 'uri-dereferencer-fetch';
             fetchButton.innerHTML = '+';
             fetchButton.onclick = async function() {
                 container.innerHTML = await UriDereferencer.dereference(uriValue.href);

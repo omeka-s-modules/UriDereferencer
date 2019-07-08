@@ -1,5 +1,5 @@
 <?php
-namespace LinkedDataDisplay;
+namespace UriDereferencer;
 
 use Omeka\Module\AbstractModule;
 use Zend\EventManager\Event;
@@ -14,8 +14,8 @@ class Module extends AbstractModule
             'view.show.before',
             function (Event $event) {
                 $view = $event->getTarget();
-                $view->headScript()->appendFile($view->assetUrl('js/linked-data-display.js', 'LinkedDataDisplay'));
-                $view->headScript()->appendFile($view->assetUrl('js/linked-data-display-services.js', 'LinkedDataDisplay'));
+                $view->headScript()->appendFile($view->assetUrl('js/uri-dereferencer.js', 'UriDereferencer'));
+                $view->headScript()->appendFile($view->assetUrl('js/uri-dereferencer-services.js', 'UriDereferencer'));
             }
         );
     }

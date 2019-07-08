@@ -209,3 +209,49 @@ UriDereferencer.addService({
         return uri.match(/^https?:\/\/vocab\.getty\.edu\/(aat|tgn|ulan)\/(.+)$/);
     }
 });
+UriDereferencer.addService({
+    getName() {
+        // https://www.geonames.org/
+        return 'Geonames';
+    },
+    isMatch(uri) {
+        return (null !== this.getMatch(uri));
+    },
+    getResourceUrl(uri) {
+        // Note that Geonames does not provide a JSON representation. Use the
+        // RDF representation instead.
+        const match = this.getMatch(uri);
+        return `http://www.geonames.org/${match[1]}/about.rdf`;
+    },
+    getMarkup(uri, text) {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(text, 'application/xml');
+        const data = new Map();
+        data.set('Name', this.getNodeText(xmlDoc, '//gn:Feature/gn:name'));
+        data.set('Official name', this.getNodeText(xmlDoc, '//gn:Feature/gn:officialName[lang("en")]'));
+        data.set('Latitude', this.getNodeText(xmlDoc, '//gn:Feature/wgs84_pos:lat'));
+        data.set('Longitude', this.getNodeText(xmlDoc, '//gn:Feature/wgs84_pos:long'));
+        data.set('Altitude', this.getNodeText(xmlDoc, '//gn:Feature/wgs84_pos:alt'));
+        let dataMarkup = '';
+        for (let [key, value] of data) {
+            if (null !== value) {
+                dataMarkup += `<dt>${key}</dt><dd>${value}</dd>`;
+            }
+        }
+        return `<dl>${dataMarkup}</dl>`;
+    },
+    getMatch(uri) {
+        return uri.match(/^https?:\/\/www\.geonames\.org\/(.+)$/);
+    },
+    getNodeText(xmlDoc, xpathExpression) {
+        const namespaceResolver = function(prefix) {
+            const ns = {
+                'gn': 'http://www.geonames.org/ontology#',
+                'wgs84_pos': 'http://www.w3.org/2003/01/geo/wgs84_pos#',
+            };
+            return ns[prefix] || null;
+        };
+        const xpathResult = xmlDoc.evaluate(xpathExpression, xmlDoc, namespaceResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+        return xpathResult.singleNodeValue ? xpathResult.singleNodeValue.textContent : null;
+    }
+});
