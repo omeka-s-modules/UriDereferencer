@@ -14,8 +14,8 @@ const UriDereferencer = {
      * Every service object should implement the following functions:
      *   - getName() {string}: Get the name of this service
      *   - isMatch(uri) {bool}: Is the URI a match for this service?
-     *   - getEndpoint(uri) {string}: Get the linked data endpoint for the URI
-     *   - getMarkup(uri, text) {string}: Get the markup derived from the data
+     *   - getResourceUrl(uri) {string}: Get the resource URL of a URI
+     *   - getMarkup(uri, text) {string}: Get the markup derived from the resource
      *
      * @param {object} service A linked data service object
      */
@@ -46,7 +46,7 @@ const UriDereferencer = {
         const service = this.getServiceByUri(uri);
         if (service) {
             try {
-                const response = await fetch(service.getEndpoint(uri));
+                const response = await fetch(service.getResourceUrl(uri));
                 if (!response.ok) {
                     throw new Error(`HTTP Error ${response.status}`);
                 }

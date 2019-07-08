@@ -8,7 +8,7 @@ UriDereferencer.addService({
     isMatch(uri) {
         return (null !== this.getMatch(uri));
     },
-    getEndpoint(uri) {
+    getResourceUrl(uri) {
         const match = this.getMatch(uri);
         return `https://www.wikidata.org/wiki/Special:EntityData/${match[1]}.json`;
     },
@@ -76,7 +76,7 @@ UriDereferencer.addService({
     isMatch(uri) {
         return (null !== this.getMatch(uri));
     },
-    getEndpoint(uri) {
+    getResourceUrl(uri) {
         const match = this.getMatch(uri);
         return `http://id.loc.gov/${match[1]}/${match[2]}/${match[3]}.skos.json`;
     },
@@ -130,7 +130,7 @@ UriDereferencer.addService({
     isMatch(uri) {
         return (null !== this.getMatch(uri));
     },
-    getEndpoint(uri) {
+    getResourceUrl(uri) {
         const match = this.getMatch(uri);
         return `http://dbpedia.org/data/${match[1]}.json`;
     },
@@ -171,7 +171,7 @@ UriDereferencer.addService({
     isMatch(uri) {
         return (null !== this.getMatch(uri));
     },
-    getEndpoint(uri) {
+    getResourceUrl(uri) {
         // Note that Getty doesn't enable cross-origin resource sharing (CORS),
         // so we can't directly fetch the JSON representations. Use the SPARQL
         // endpoint instead.
