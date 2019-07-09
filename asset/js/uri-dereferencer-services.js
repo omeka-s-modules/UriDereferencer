@@ -255,3 +255,69 @@ UriDereferencer.addService({
         return xpathResult.singleNodeValue ? xpathResult.singleNodeValue.textContent : null;
     }
 });
+UriDereferencer.addService({
+    getName() {
+        return 'OCLC VIAF';
+    },
+    isMatch(uri) {
+        return (null !== this.getMatch(uri));
+    },
+    getResourceUrl(uri) {
+        const match = this.getMatch(uri);
+        return `https://viaf.org/viaf/${match[1]}/viaf.json`;
+    },
+    getMarkup(uri, text) {
+        // Note that we're prioritizing Library of Congress (LC) as the source.
+        const match = this.getMatch(uri);
+        const json = JSON.parse(text);
+        const data = new Map();
+        if (UriDereferencer.isset(() => json['mainHeadings']['data'])) {
+            const headings = [];
+            for (let heading of json['mainHeadings']['data']) {
+                if (heading['sources']['s'].includes('LC')) {
+                    headings.push(heading['text']);
+                }
+            }
+            if (headings.length) {
+                data.set('Main headings', headings.join('; '));
+            }
+        }
+        if (UriDereferencer.isset(() => json['nameType'])) {
+            data.set('Name type', json['nameType']);
+        }
+        if (UriDereferencer.isset(() => json['fieldOfActivity']['data'])) {
+            for (let fields of json['fieldOfActivity']['data']) {
+                if ('LC' === fields['sources']['s']) {
+                    data.set('Field of activity', fields['text']);
+                }
+            }
+        }
+        if (UriDereferencer.isset(() => json['occupation']['data'])) {
+            const occupations = [];
+            for (let occupation of json['occupation']['data']) {
+                if ('LC' === occupation['sources']['s']) {
+                    occupations.push(occupation['text']);
+                }
+            }
+            if (occupations.length) {
+                data.set('Occupation', occupations.join('; '));
+            }
+        }
+        if (UriDereferencer.isset(() => json['birthDate'])) {
+            data.set('Birth date', json['birthDate']);
+        }
+        if (UriDereferencer.isset(() => json['deathDate'])) {
+            data.set('Death date', json['deathDate']);
+        }
+        let dataMarkup = '';
+        for (let [key, value] of data) {
+            if (null !== value) {
+                dataMarkup += `<dt>${key}</dt><dd>${value}</dd>`;
+            }
+        }
+        return `<dl>${dataMarkup}</dl>`;
+    },
+    getMatch(uri) {
+        return uri.match(/^https?:\/\/www\.viaf\.org\/viaf\/(.+)$/);
+    }
+});
