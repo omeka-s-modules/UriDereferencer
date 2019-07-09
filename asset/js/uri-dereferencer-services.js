@@ -212,7 +212,7 @@ UriDereferencer.addService({
 UriDereferencer.addService({
     getName() {
         // https://www.geonames.org/
-        return 'Geonames';
+        return 'Geonames: The GeoNames geographical database';
     },
     isMatch(uri) {
         return (null !== this.getMatch(uri));
@@ -257,7 +257,7 @@ UriDereferencer.addService({
 });
 UriDereferencer.addService({
     getName() {
-        return 'OCLC VIAF';
+        return 'OCLC: The Virtual International Authority File (VIAF)';
     },
     isMatch(uri) {
         return (null !== this.getMatch(uri));
