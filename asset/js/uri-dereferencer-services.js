@@ -321,3 +321,46 @@ UriDereferencer.addService({
         return uri.match(/^https?:\/\/www\.viaf\.org\/viaf\/(.+)$/);
     }
 });
+UriDereferencer.addService({
+    getName() {
+        // http://www.rdaregistry.info/termList/
+        return 'RDA Vocabularies';
+    },
+    isMatch(uri) {
+        return (null !== this.getMatch(uri));
+    },
+    getResourceUrl(uri) {
+        // Note that the resource URL is a graph of every concept.
+        const match = this.getMatch(uri);
+        return `http://rdaregistry.info/termList/${match[1]}.jsonld`;
+    },
+    getMarkup(uri, text) {
+        const match = this.getMatch(uri);
+        const json = JSON.parse(text);
+        const data = new Map();
+        for (let concept of json['@graph']) {
+            if (uri === concept['@id']) {
+                if (UriDereferencer.isset(() => concept['prefLabel']['en'])) {
+                    data.set('Pref label', concept['prefLabel']['en']);
+                }
+                if (UriDereferencer.isset(() => concept['altLabel']['en'])) {
+                    data.set('Alt label', concept['altLabel']['en']);
+                }
+                if (UriDereferencer.isset(() => concept['definition']['en'])) {
+                    data.set('Definition', concept['definition']['en']);
+                }
+                break;
+            }
+        }
+        let dataMarkup = '';
+        for (let [key, value] of data) {
+            if (null !== value) {
+                dataMarkup += `<dt>${key}</dt><dd>${value}</dd>`;
+            }
+        }
+        return `<dl>${dataMarkup}</dl>`;
+    },
+    getMatch(uri) {
+        return uri.match(/^https?:\/\/rdaregistry\.info\/termList\/(.+)\/(.+)$/);
+    }
+});
