@@ -4,13 +4,21 @@ Dereferences URIs when viewing items, media, and item sets.
 
 ## Dereferenceable URIs
 
-Dereferenceable URIs are the backbone of [Linked Data](https://en.wikipedia.org/wiki/Linked_data). Dereferenced resources provide useful information about what a URI identifies when it's looked up. This module allows users to view a snapshot of linked data without having to navigate away from the page (i.e. dereference the URI).
+Dereferenceable URIs are the backbone of [Linked Data](https://en.wikipedia.org/wiki/Linked_data).
+They can be looked up (dereferenced) to provide useful information about the resource
+that the URI identifies, which in turn refers to other URIs, and so on.
 
-This module will automatically dereference all "URI" data type values that match a registered service. If you want your custom data type values to be dereferenceable, you must add the `uri-value-link` class to the anchor tag containing the URI.
+This module looks up URIs on the page and provides users a snapshot of linked data
+without having to navigate away from the page. It will automatically dereference
+all "URI" data type values that match a registered service. If you want your custom
+data type values to be dereferenceable, you must add the `uri-value-link` class
+to the anchor tag containing the URI.
 
-## Linked Data Services
+## Linked data services
 
-Linked data services are JavaScript objects that are responsible for dereferencing URIs and returning linked data markup. This module already comes with a handful of services:
+Linked data services are JavaScript objects that are responsible for dereferencing
+URIs and returning information about the resource. This module already comes with
+a handful of services:
 
 - [Wikidata](https://www.wikidata.org/wiki/Wikidata:Main_Page)
 - [DBpedia](https://wiki.dbpedia.org/)
@@ -19,42 +27,49 @@ Linked data services are JavaScript objects that are responsible for dereferenci
 - [OCLC VIAF](https://www.oclc.org/en/viaf.html)
 - [Geonames](https://www.geonames.org/)
 
-You can create your own linked data service objects by writing them against the following interface and adding them to the global `UriDereferencer` object.
+You can create your own linked data service objects by writing them against the
+following interface and adding them to the global `UriDereferencer` object.
 
-### Service Interface
+### Service interface
 
 ```js
 {
     /**
      * Get the name of this service.
+     *
      * @return {string}
      */
-    getName(),
+    getName() {},
     /**
      * Does this service recognize the URI?
+     *
      * @param {string} uri The URI
      * @return {bool}
      */
-    isMatch(uri),
+    isMatch(uri) {},
     /**
-     * Get the resource URL of a URI. The resource URL typically dereferences to
-     * an RDF file (JSON-LD, XML, etc.) that represents the URI. Note that the
-     * service must have cross-origin resource sharing (CORS) enabled.
+     * Get the resource URL of a URI.
+     *
+     * The resource URL typically dereferences to an RDF file (JSON-LD, XML,
+     * etc.) that represents the URI. Note that the service must have cross-
+     * origin resource sharing (CORS) enabled.
+     *
      * @param {string} uri The URI
      * @return {string}
      */
-    getResourceUrl(uri),
+    getResourceUrl(uri) {},
     /**
-     * Get the markup derived from the response text.
+     * Get information about the resource in HTML markup.
+     *
      * @param {string} uri The URI
      * @param {string} text The response text of the resource
      * @return {string}
      */
-    getMarkup(uri, text)
+    getMarkup(uri, text) {}
 }
 ```
 
-### Service Implementation Example
+### Service implementation example
 
 ```js
 UriDereferencer.addService({
