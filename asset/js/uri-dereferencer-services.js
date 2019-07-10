@@ -2,7 +2,7 @@
 
 UriDereferencer.addService({
     getName() {
-        // https://www.wikidata.org/wiki/Wikidata:Data_access#Linked_Data_interface
+        // https://www.wikidata.org/wiki/Wikidata:Main_Page
         return 'Wikidata';
     },
     isMatch(uri) {
@@ -71,7 +71,7 @@ UriDereferencer.addService({
     ],
     getName() {
         // http://id.loc.gov/
-        return 'Library of Congress Authorities and Vocabularies';
+        return 'LC Linked Data Service';
     },
     isMatch(uri) {
         return (null !== this.getMatch(uri));
@@ -124,7 +124,7 @@ UriDereferencer.addService({
 });
 UriDereferencer.addService({
     getName() {
-        // https://wiki.dbpedia.org/OnlineAccess#2%20Linked%20Data
+        // https://wiki.dbpedia.org/
         return 'DBpedia';
     },
     isMatch(uri) {
@@ -165,8 +165,8 @@ UriDereferencer.addService({
 });
 UriDereferencer.addService({
     getName() {
-        // http://www.getty.edu/research/tools/vocabularies/lod/
-        return 'Getty Vocabularies (AAT, TGN, ULAN)';
+        // https://www.getty.edu/research/tools/vocabularies/
+        return 'Getty Vocabularies';
     },
     isMatch(uri) {
         return (null !== this.getMatch(uri));
@@ -257,6 +257,7 @@ UriDereferencer.addService({
 });
 UriDereferencer.addService({
     getName() {
+        // https://www.oclc.org/en/viaf.html
         return 'OCLC VIAF';
     },
     isMatch(uri) {
@@ -323,7 +324,7 @@ UriDereferencer.addService({
 });
 UriDereferencer.addService({
     getName() {
-        // http://www.rdaregistry.info/termList/
+        // http://www.rdaregistry.info
         return 'RDA Vocabularies';
     },
     isMatch(uri) {

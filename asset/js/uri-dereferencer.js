@@ -11,12 +11,6 @@ const UriDereferencer = {
      * Note that services are keyed by their name. If services have duplicate
      * names, the last service added will overwrite the previous.
      *
-     * Every service object should implement the following functions:
-     *   - getName() {string}: Get the name of this service
-     *   - isMatch(uri) {bool}: Is the URI a match for this service?
-     *   - getResourceUrl(uri) {string}: Get the resource URL of a URI
-     *   - getMarkup(uri, text) {string}: Get the markup derived from the resource
-     *
      * @param {object} service A linked data service object
      */
     addService(service) {
