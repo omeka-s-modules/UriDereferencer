@@ -4,6 +4,13 @@
  * Use to dereference a URI using registered linked data services.
  */
 const UriDereferencer = {
+    /**
+     * The proxy endpoint. The service's resource URL will be appended.
+     */
+    proxyEndpoint: null,
+    /**
+     * Linked data services.
+     */
     services: new Map(),
     /**
      * Add a linked data service object.
@@ -31,6 +38,43 @@ const UriDereferencer = {
         return false;
     },
     /**
+     * Is a URI dereferenceable?
+     *
+     * @param {string} uri The URI
+     * @return {bool}
+     */
+    isDereferenceable(uri) {
+        const service = this.getServiceByUri(uri);
+        if (!service) {
+            // No service found.
+            return false;
+        }
+        const resourceUrl = this.getResourceUrlForService(uri, service);
+        if (!resourceUrl) {
+            // Cannot determine resource URL.
+            return false;
+        }
+        return true;
+    },
+    /**
+     * Get a resource URL for a service.
+     *
+     * @param {string} uri The URI
+     * @param {object} service A linked data service object
+     * @return {string|false} Returns false if cannot determine resource URL
+     */
+    getResourceUrlForService(uri, service) {
+        const options = service.getOptions();
+        const resourceUrl = service.getResourceUrl(uri);
+        if (true !== options.useProxy) {
+            return resourceUrl;
+        }
+        if (null !== this.proxyEndpoint) {
+            return `${this.proxyEndpoint}${encodeURIComponent(resourceUrl)}`;
+        }
+        return false;
+    },
+    /**
      * Dereference a URI and return the linked data markup.
      *
      * @param {string} uri The URI
@@ -38,16 +82,23 @@ const UriDereferencer = {
      */
     async dereference(uri) {
         const service = this.getServiceByUri(uri);
-        if (service) {
-            try {
-                const response = await fetch(service.getResourceUrl(uri));
-                if (!response.ok) {
-                    throw new Error(`HTTP Error ${response.status}`);
-                }
-                return service.getMarkup(uri, await response.text());
-            } catch (error) {
-                console.log(`Error in service "${service.getName()}" using URI "${uri}": ${error.message}`);
+        if (!service) {
+            console.log(`No service found for URI "${uri}"`);
+            return;
+        }
+        try {
+            const resourceUrl = this.getResourceUrlForService(uri, service);
+            if (!resourceUrl) {
+                throw new Error('Cannot determine resource URL');
             }
+            const response = await fetch(resourceUrl);
+            if (!response.ok) {
+                throw new Error(`HTTP Error ${response.status}`);
+            }
+            return service.getMarkup(uri, await response.text());
+        } catch (error) {
+            console.log(`Error in service "${service.getName()}" using URI "${uri}": ${error.message}`);
+            return;
         }
     },
     /**
