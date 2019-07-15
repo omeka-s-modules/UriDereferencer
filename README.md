@@ -25,6 +25,7 @@ a handful of services:
 - [LC Linked Data Service](http://id.loc.gov/)
 - [Getty Vocabularies](https://www.getty.edu/research/tools/vocabularies/)
 - [OCLC VIAF](https://www.oclc.org/en/viaf.html)
+- [OCLC FAST](http://fast.oclc.org/)
 - [Geonames](https://www.geonames.org/)
 
 You can create your own linked data service objects by writing them against the
@@ -40,6 +41,12 @@ following interface and adding them to the global `UriDereferencer` object.
      * @return {string}
      */
     getName() {},
+    /**
+     * Get options for this service.
+     *
+     * @return {object}
+     */
+    getOptions() {},
     /**
      * Does this service recognize the URI?
      *
@@ -69,6 +76,14 @@ following interface and adding them to the global `UriDereferencer` object.
 }
 ```
 
+### Service options
+
+Services can modify their options if they require special handling.
+
+- `useProxy: {bool}`: (default `false`) Use the local proxy server if configured? This
+is useful if the linked data service doesn't allow cross-origin HTTP requests (CORS).
+Note that the global `UriDereferencer` object must have set a valid `proxyEndpoint`.
+
 ### Service implementation example
 
 ```js
@@ -76,6 +91,10 @@ UriDereferencer.addService({
     getName() {
         return 'My Linked Data Service';
     },
+    getOptions() {
+        // This example assumes this service requires a proxy server
+        return {useProxy: true};
+    }
     isMatch(uri) {
         return (null !== this.getMatch(uri));
     },

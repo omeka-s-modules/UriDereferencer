@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function(event) {
     for (let uriValue of document.getElementsByClassName('uri-value-link')) {
-        if (UriDereferencer.getServiceByUri(uriValue.href)) {
+        if (UriDereferencer.isDereferenceable(uriValue.href)) {
             // The data markup container.
             const container = document.createElement('div');
             container.className = 'uri-dereferencer-markup';

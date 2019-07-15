@@ -5,6 +5,9 @@ UriDereferencer.addService({
         // https://www.wikidata.org/wiki/Wikidata:Main_Page
         return 'Wikidata';
     },
+    getOptions() {
+        return {};
+    },
     isMatch(uri) {
         return (null !== this.getMatch(uri));
     },
@@ -73,6 +76,9 @@ UriDereferencer.addService({
         // http://id.loc.gov/
         return 'LC Linked Data Service';
     },
+    getOptions() {
+        return {};
+    },
     isMatch(uri) {
         return (null !== this.getMatch(uri));
     },
@@ -127,6 +133,9 @@ UriDereferencer.addService({
         // https://wiki.dbpedia.org/
         return 'DBpedia';
     },
+    getOptions() {
+        return {};
+    },
     isMatch(uri) {
         return (null !== this.getMatch(uri));
     },
@@ -167,6 +176,9 @@ UriDereferencer.addService({
     getName() {
         // https://www.getty.edu/research/tools/vocabularies/
         return 'Getty Vocabularies';
+    },
+    getOptions() {
+        return {};
     },
     isMatch(uri) {
         return (null !== this.getMatch(uri));
@@ -214,6 +226,9 @@ UriDereferencer.addService({
         // https://www.geonames.org/
         return 'Geonames';
     },
+    getOptions() {
+        return {};
+    },
     isMatch(uri) {
         return (null !== this.getMatch(uri));
     },
@@ -259,6 +274,9 @@ UriDereferencer.addService({
     getName() {
         // https://www.oclc.org/en/viaf.html
         return 'OCLC VIAF';
+    },
+    getOptions() {
+        return {};
     },
     isMatch(uri) {
         return (null !== this.getMatch(uri));
@@ -324,8 +342,63 @@ UriDereferencer.addService({
 });
 UriDereferencer.addService({
     getName() {
+        // http://fast.oclc.org/
+        return 'OCLC FAST';
+    },
+    getOptions() {
+        // Must use the proxy because responses sent from OCLC FAST don't
+        // include an Access-Control-Allow-Origin header.
+        return {'useProxy': true};
+    },
+    isMatch(uri) {
+        return (null !== this.getMatch(uri));
+    },
+    getResourceUrl(uri) {
+        const match = this.getMatch(uri);
+        return `http://id.worldcat.org/fast/${match[1]}/rdf.xml`;
+    },
+    getMarkup(uri, text) {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(text, 'application/xml');
+        const data = new Map();
+        data.set('Pref label', this.getNodeText(xmlDoc, `//rdf:Description/skos:prefLabel`));
+        data.set('Alt label', this.getNodeText(xmlDoc, `//rdf:Description/skos:altLabel`));
+        let dataMarkup = '';
+        for (let [key, value] of data) {
+            if (null !== value) {
+                dataMarkup += `<dt>${key}</dt><dd>${value}</dd>`;
+            }
+        }
+        return `<dl>${dataMarkup}</dl>`;
+    },
+    getMatch(uri) {
+        return uri.match(/^https?:\/\/id\.worldcat\.org\/fast\/(.+)$/);
+    },
+    getNodeText(xmlDoc, xpathExpression) {
+        const namespaceResolver = function(prefix) {
+            const ns = {
+                'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                'skos': 'http://www.w3.org/2004/02/skos/core#',
+            };
+            return ns[prefix] || null;
+        };
+        const texts = [];
+        const xpathResult = xmlDoc.evaluate(xpathExpression, xmlDoc, namespaceResolver, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+        let thisNode = xpathResult.iterateNext();
+        while (thisNode) {
+            texts.push(thisNode.textContent);
+            thisNode = xpathResult.iterateNext();
+        }
+        return texts.join('; ');
+    }
+});
+UriDereferencer.addService({
+    getName() {
         // http://www.rdaregistry.info
         return 'RDA Vocabularies';
+    },
+    getOptions() {
+        return {};
     },
     isMatch(uri) {
         return (null !== this.getMatch(uri));
