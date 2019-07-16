@@ -24,20 +24,6 @@ const UriDereferencer = {
         this.services.set(service.getName(), service);
     },
     /**
-     * Get a service object by URI.
-     *
-     * @param {string} uri The URI
-     * @return {object|false} Returns false if no service matches
-     */
-    getServiceByUri(uri) {
-        for (let service of this.services.values()) {
-            if (service.isMatch(uri)) {
-                return service;
-            }
-        }
-        return false;
-    },
-    /**
      * Is a URI dereferenceable?
      *
      * @param {string} uri The URI
@@ -55,24 +41,6 @@ const UriDereferencer = {
             return false;
         }
         return true;
-    },
-    /**
-     * Get a resource URL for a service.
-     *
-     * @param {string} uri The URI
-     * @param {object} service A linked data service object
-     * @return {string|false} Returns false if cannot determine resource URL
-     */
-    getResourceUrlForService(uri, service) {
-        const options = service.getOptions();
-        const resourceUrl = service.getResourceUrl(uri);
-        if (true !== options.useProxy) {
-            return resourceUrl;
-        }
-        if (null !== this.proxyEndpoint) {
-            return `${this.proxyEndpoint}${encodeURIComponent(resourceUrl)}`;
-        }
-        return false;
     },
     /**
      * Dereference a URI and return the linked data markup.
@@ -100,6 +68,38 @@ const UriDereferencer = {
             console.log(`Error in service "${service.getName()}" using URI "${uri}": ${error.message}`);
             return;
         }
+    },
+    /**
+     * Get a service object by URI.
+     *
+     * @param {string} uri The URI
+     * @return {object|false} Returns false if no service matches
+     */
+    getServiceByUri(uri) {
+        for (let service of this.services.values()) {
+            if (service.isMatch(uri)) {
+                return service;
+            }
+        }
+        return false;
+    },
+    /**
+     * Get a resource URL for a service.
+     *
+     * @param {string} uri The URI
+     * @param {object} service A linked data service object
+     * @return {string|false} Returns false if cannot determine resource URL
+     */
+    getResourceUrlForService(uri, service) {
+        const resourceUrl = service.getResourceUrl(uri);
+        const options = service.getOptions();
+        if (true !== options.useProxy) {
+            return resourceUrl;
+        }
+        if (null !== this.proxyEndpoint) {
+            return `${this.proxyEndpoint}${encodeURIComponent(resourceUrl)}`;
+        }
+        return false;
     },
     /**
      * Check to see if a value is set.
