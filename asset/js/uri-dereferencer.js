@@ -5,9 +5,9 @@
  */
 const UriDereferencer = {
     /**
-     * The proxy endpoint. The service's resource URL will be appended.
+     * The proxy URL.
      */
-    proxyEndpoint: null,
+    proxyUrl: null,
     /**
      * Linked data services.
      */
@@ -96,8 +96,8 @@ const UriDereferencer = {
         if (true !== options.useProxy) {
             return resourceUrl;
         }
-        if (null !== this.proxyEndpoint) {
-            return `${this.proxyEndpoint}${encodeURIComponent(resourceUrl)}`;
+        if (null !== this.proxyUrl) {
+            return `${this.proxyUrl}?resource-url=${encodeURIComponent(resourceUrl)}`;
         }
         return false;
     },

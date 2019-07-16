@@ -82,7 +82,7 @@ Services can modify their options if they require special handling.
 
 - `useProxy: {bool}`: (default `false`) Use the local proxy server if configured? This
 is useful if the linked data service doesn't allow cross-origin HTTP requests (CORS).
-Note that the global `UriDereferencer` object must have set a valid `proxyEndpoint`.
+Note that the global `UriDereferencer` object must have set a valid `proxyUrl`.
 
 ### Service implementation example
 

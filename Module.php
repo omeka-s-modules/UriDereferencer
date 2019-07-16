@@ -45,8 +45,8 @@ class Module extends AbstractModule
                 $view->headScript()->appendFile($view->assetUrl('js/uri-dereferencer-module.js', 'UriDereferencer'));
                 $view->headScript()->appendScript(
                     sprintf(
-                        'UriDereferencer.proxyEndpoint = "%s";',
-                        $view->escapeJs($view->url('uri-dereferencer', [], ['query' => ['resource-url' => '']]))
+                        'UriDereferencer.proxyUrl = "%s";',
+                        $view->escapeJs($view->url('uri-dereferencer'))
                     )
                 );
             }
