@@ -10,12 +10,22 @@ class Module extends AbstractModule
     public function getConfig()
     {
         return [
+            'controllers' => [
+                'factories' => [
+                    'UriDereferencer\Controller\Index' => 'UriDereferencer\Service\IndexControllerFactory',
+                ],
+            ],
             'router' => [
                 'routes' => [
                     'uri-dereferencer' => [
                         'type' => 'Segment',
                         'options' => [
                             'route' => '/uri-dereferencer',
+                            'defaults' => [
+                                '__NAMESPACE__' => 'UriDereferencer\Controller',
+                                'controller' => 'Index',
+                                'action' => 'proxy',
+                            ],
                         ],
                     ],
                 ],
@@ -39,23 +49,6 @@ class Module extends AbstractModule
                         $view->escapeJs($view->url('uri-dereferencer', [], ['query' => ['resource-url' => '']]))
                     )
                 );
-            }
-        );
-        $sharedEventManager->attach(
-            '*',
-            'route',
-            function (Event $event) {
-                $matchedRouteName = $event->getRouteMatch()->getMatchedRouteName();
-                if ('uri-dereferencer' !== $matchedRouteName) {
-                    return;
-                }
-                $resourceUrl = $event->getRequest()->getQuery()->get('resource-url');
-                if (!$resourceUrl) {
-                    throw new \Exception('No resource-url provided');
-                }
-                $client = $event->getApplication()->getServiceManager()->get('Omeka\HttpClient');
-                echo $client->setUri($resourceUrl)->send()->getBody();
-                exit;
             }
         );
     }
