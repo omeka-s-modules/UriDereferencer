@@ -40,6 +40,7 @@ class Module extends AbstractModule
             'view.show.before',
             function (Event $event) {
                 $view = $event->getTarget();
+                $view->headlink()->prependStylesheet($view->assetUrl('css/uri-dereferencer.css', 'UriDereferencer'));
                 $view->headScript()->prependFile($view->assetUrl('js/uri-dereferencer.js', 'UriDereferencer'));
                 $view->headScript()->appendFile($view->assetUrl('js/uri-dereferencer-services.js', 'UriDereferencer'));
                 $view->headScript()->appendFile($view->assetUrl('js/uri-dereferencer-module.js', 'UriDereferencer'));

@@ -1,0 +1,10 @@
+i.loading:before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f1ce";
+    font-style: normal;
+    animation: fa-spin 1s infinite linear;
+    height: 1.5em;
+    width: 1.2em;
+    display: block;
+    text-align: center;
+}

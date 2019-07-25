@@ -26,7 +26,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
         const fetchButton = document.createElement('button');
         fetchButton.className = 'uri-dereferencer-fetch';
         fetchButton.innerHTML = '+';
+        loading = document.createElement('i');
+        loading.className = 'loading';
         fetchButton.onclick = async function() {
+            container.innerHTML = loading;
             container.innerHTML = await UriDereferencer.dereference(uriValue.href);
             this.remove();
             toggleButton.style.display = 'inline';
