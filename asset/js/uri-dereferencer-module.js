@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
         loading.className = 'loading';
         fetchButton.onclick = async function() {
             container.innerHTML = loading;
+            container.innerHTML = loading.outerHTML;
             container.innerHTML = await UriDereferencer.dereference(uriValue.href);
             this.remove();
             toggleButton.style.display = 'inline';
