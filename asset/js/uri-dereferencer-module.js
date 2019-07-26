@@ -8,13 +8,15 @@ document.addEventListener('DOMContentLoaded', function(event) {
         container.className = 'uri-dereferencer-markup';
 
         // The toggle button.
-        const toggleButton = document.createElement('button');
+        const toggleButton = document.createElement('a');
         toggleButton.className = 'uri-dereferencer-toggle';
+        toggleButton.href = '#';
         toggleButton.innerHTML = '-';
         toggleButton.style.display = 'none';
-        toggleButton.onclick = function() {
+        toggleButton.onclick = function(e) {
+            e.preventDefault();
             if ('none' === container.style.display) {
-                container.style.display = 'block';
+                container.style.display = 'inline-flex';
                 this.innerHTML = '-';
             } else {
                 container.style.display = 'none';
@@ -23,17 +25,18 @@ document.addEventListener('DOMContentLoaded', function(event) {
         };
 
         // The fetch button.
-        const fetchButton = document.createElement('button');
+        const fetchButton = document.createElement('a');
         fetchButton.className = 'uri-dereferencer-fetch';
+        fetchButton.href = '#';
         fetchButton.innerHTML = '+';
         loading = document.createElement('i');
         loading.className = 'loading';
-        fetchButton.onclick = async function() {
-            container.innerHTML = loading;
+        fetchButton.onclick = async function(e) {
+            e.preventDefault();
             container.innerHTML = loading.outerHTML;
             container.innerHTML = await UriDereferencer.dereference(uriValue.href);
             this.remove();
-            toggleButton.style.display = 'inline';
+            toggleButton.style.display = 'inline-flex';
         };
 
         uriValue.parentNode.appendChild(fetchButton);

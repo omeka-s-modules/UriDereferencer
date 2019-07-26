@@ -8,3 +8,21 @@ i.loading:before {
     display: block;
     text-align: center;
 }
+
+a.uri-dereferencer-toggle,
+a.uri-dereferencer-fetch {
+    width: 1.5em;
+    text-align: center;
+    display: inline-flex;
+    justify-content: space-between;
+}
+
+a.uri-dereferencer-toggle:before,
+a.uri-dereferencer-fetch:before {
+    content: "[";
+}
+
+a.uri-dereferencer-toggle:after,
+a.uri-dereferencer-fetch:after {
+    content: "]";
+}
