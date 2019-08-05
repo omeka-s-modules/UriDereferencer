@@ -26,3 +26,7 @@ a.uri-dereferencer-toggle:after,
 a.uri-dereferencer-fetch:after {
     content: "]";
 }
+
+.uri-dereferencer-markup {
+  width: 100%;
+}
