@@ -399,8 +399,8 @@ UriDereferencer.addService({
 });
 UriDereferencer.addService({
     getName() {
-        // http://www.rdaregistry.info
-        return 'RDA Vocabularies';
+        // https://www.rdaregistry.info/termList/
+        return 'RDA Value Vocabularies';
     },
     getOptions() {
         return {};
@@ -415,10 +415,11 @@ UriDereferencer.addService({
     },
     getMarkup(uri, text) {
         const match = this.getMatch(uri);
+        const canonicalUri = `http://rdaregistry.info/termList/${match[1]}/${match[2]}`;
         const json = JSON.parse(text);
         const data = new Map();
         for (let concept of json['@graph']) {
-            if (uri === concept['@id']) {
+            if (canonicalUri === concept['@id']) {
                 if (UriDereferencer.isset(() => concept['prefLabel']['en'])) {
                     data.set('Pref label', concept['prefLabel']['en']);
                 }
@@ -440,6 +441,6 @@ UriDereferencer.addService({
         return `<dl>${dataMarkup}</dl>`;
     },
     getMatch(uri) {
-        return uri.match(/^https?:\/\/rdaregistry\.info\/termList\/(.+)\/(.+)$/);
+        return uri.match(/^https?:\/\/(?:www\.)?rdaregistry\.info\/termList\/(.+)\/#?(.+)$/);
     }
 });
