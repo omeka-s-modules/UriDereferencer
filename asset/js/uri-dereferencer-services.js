@@ -72,6 +72,9 @@ UriDereferencer.addService({
         // Preservation Vocabularies
         'preservation', // we get the rest for free!
     ],
+    resources: [
+        'works', 'instances', 'items',
+    ],
     getName() {
         // http://id.loc.gov/
         return 'LC Linked Data Service';
@@ -84,7 +87,7 @@ UriDereferencer.addService({
     },
     getResourceUrl(uri) {
         const match = this.getMatch(uri);
-        return `http://id.loc.gov/${match[1]}/${match[2]}/${match[3]}.skos.json`;
+        return `http://id.loc.gov/${match[1]}/${match[2]}/${match[3]}.json`;
     },
     getMarkup(uri, text) {
         const match = this.getMatch(uri);
@@ -124,7 +127,7 @@ UriDereferencer.addService({
         return `<dl>${dataMarkup}</dl>`;
     },
     getMatch(uri) {
-        const re = new RegExp(`^http?:\/\/id\.loc\.gov\/(authorities|vocabulary)\/(${this.authorities.join('|')}|${this.vocabularies.join('|')})\/(.+?)(\.html)?$`);
+        const re = new RegExp(`^http?:\/\/id\.loc\.gov\/(authorities|vocabulary|resources)\/(${this.authorities.join('|')}|${this.vocabularies.join('|')}|${this.resources.join('|')})\/(.+?)(\.html)?$`);
         return uri.match(re);
     }
 });
