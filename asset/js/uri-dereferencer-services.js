@@ -342,7 +342,7 @@ UriDereferencer.addService({
         return `<dl>${dataMarkup}</dl>`;
     },
     getMatch(uri) {
-        return uri.match(/^https?:\/\/www\.viaf\.org\/viaf\/(.+)$/);
+        return uri.match(/^https?:\/\/(?:www\.)?viaf\.org\/viaf\/(.+)(?:\/#.+)$/);
     }
 });
 UriDereferencer.addService({
