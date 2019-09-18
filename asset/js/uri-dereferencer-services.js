@@ -279,7 +279,9 @@ UriDereferencer.addService({
         return 'OCLC VIAF';
     },
     getOptions() {
-        return {};
+        // Must use the proxy because responses sent from OCLC VIAF don't
+        // include an Access-Control-Allow-Origin header.
+        return {'useProxy': true};
     },
     isMatch(uri) {
         return (null !== this.getMatch(uri));
