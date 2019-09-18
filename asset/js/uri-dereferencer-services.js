@@ -259,7 +259,7 @@ UriDereferencer.addService({
         return `<dl>${dataMarkup}</dl>`;
     },
     getMatch(uri) {
-        return uri.match(/^https?:\/\/www\.geonames\.org\/(.+)$/);
+        return uri.match(/^https?:\/\/www\.geonames\.org\/(.+?)(?:\/.+\.html)?$/);
     },
     getNodeText(xmlDoc, xpathExpression) {
         const namespaceResolver = function(prefix) {
