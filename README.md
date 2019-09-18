@@ -20,13 +20,14 @@ Linked data services are JavaScript objects that are responsible for dereferenci
 URIs and returning information about the resource. This module already comes with
 a handful of services:
 
-- [Wikidata](https://www.wikidata.org/wiki/Wikidata:Main_Page)
 - [DBpedia](https://wiki.dbpedia.org/)
-- [LC Linked Data Service](http://id.loc.gov/)
+- [Geonames](https://www.geonames.org/)
 - [Getty Vocabularies](https://www.getty.edu/research/tools/vocabularies/)
+- [LC Linked Data Service](http://id.loc.gov/)
 - [OCLC VIAF](https://www.oclc.org/en/viaf.html)
 - [OCLC FAST](http://fast.oclc.org/)
-- [Geonames](https://www.geonames.org/)
+- [RDA Value Vocabularies](http://www.rdaregistry.info/termList/)
+- [Wikidata](https://www.wikidata.org/wiki/Wikidata:Main_Page)
 
 You can create your own linked data service objects by writing them against the
 following interface and adding them to the global `UriDereferencer` object.
