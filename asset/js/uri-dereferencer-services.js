@@ -310,7 +310,11 @@ UriDereferencer.addService({
             data.set('Name type', json['nameType']);
         }
         if (UriDereferencer.isset(() => json['fieldOfActivity']['data'])) {
-            for (let fields of json['fieldOfActivity']['data']) {
+            let retrievedData = json['fieldOfActivity']['data'];
+            if (!Array.isArray(retrievedData)) {
+                retrievedData = [retrievedData];
+            }
+            for (let fields of retrievedData) {
                 if ('LC' === fields['sources']['s']) {
                     data.set('Field of activity', fields['text']);
                 }
