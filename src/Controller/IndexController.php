@@ -1,8 +1,8 @@
 <?php
 namespace UriDereferencer\Controller;
 
-use Zend\Http\Client;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Http\Client;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class IndexController extends AbstractActionController
 {
