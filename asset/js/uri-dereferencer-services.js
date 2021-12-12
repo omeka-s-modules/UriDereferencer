@@ -450,3 +450,37 @@ UriDereferencer.addService({
         return uri.match(/^https?:\/\/(?:www\.)?rdaregistry\.info\/termList\/(.+)\/#?(.+)$/);
     }
 });
+UriDereferencer.addService({
+    getName() {
+        // https://www.gemeentegeschiedenis.nl/
+        return 'Gemeentegeschiedenis'; // Dutch municipal history
+    },
+    getOptions() {
+		return {};
+    },
+    isMatch(uri) {
+        return (null !== this.getMatch(uri));
+    },
+    getResourceUrl(uri) {
+        const match = this.getMatch(uri);
+        return `https://www.gemeentegeschiedenis.nl/gemeentenaam/json/${match[1]}`;
+    },
+    getMarkup(uri, text) {
+        const match = this.getMatch(uri);
+        const json = JSON.parse(text);
+        const data = new Map();		
+		Object.keys(json).forEach(function(key) {
+			if (key!="geometries" && key!="uri" && json[key]!="null" && typeof json[key] === 'string') {
+				data.set(key, json[key]);
+			}
+		})
+        let dataMarkup = '';
+        for (let [key, value] of data) {
+            dataMarkup += `<dt>${key}</dt><dd>${value}</dd>`
+        }
+        return `<dl>${dataMarkup}</dl>`;
+    },
+    getMatch(uri) {
+        return uri.match(/^https?:\/\/www\.gemeentegeschiedenis\.nl\/gemeentenaam\/(.*)/);
+    }
+});
