@@ -28,6 +28,7 @@ a handful of services:
 - [OCLC FAST](http://fast.oclc.org/)
 - [RDA Value Vocabularies](http://www.rdaregistry.info/termList/)
 - [Wikidata](https://www.wikidata.org/wiki/Wikidata:Main_Page)
+- [Gemeentegeschiedenis](https://www.gemeentegeschiedenis.nl/)
 
 You can create your own linked data service objects by writing them against the
 following interface and adding them to the global `UriDereferencer` object.
