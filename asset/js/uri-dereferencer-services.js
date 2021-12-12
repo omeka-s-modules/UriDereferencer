@@ -230,7 +230,9 @@ UriDereferencer.addService({
         return 'Geonames';
     },
     getOptions() {
-        return {};
+        // Must use the proxy because responses sent from Geonames don't
+        // include an Access-Control-Allow-Origin header.
+        return {'useProxy': true};
     },
     isMatch(uri) {
         return (null !== this.getMatch(uri));
@@ -259,7 +261,7 @@ UriDereferencer.addService({
         return `<dl>${dataMarkup}</dl>`;
     },
     getMatch(uri) {
-        return uri.match(/^https?:\/\/www\.geonames\.org\/(.+?)(?:\/.+\.html)?$/);
+      return uri.match(/^https?:\/\/[sw]w[sw]\.geonames\.org\/(.+?)(?:\/.+\.html)?$/);
     },
     getNodeText(xmlDoc, xpathExpression) {
         const namespaceResolver = function(prefix) {
