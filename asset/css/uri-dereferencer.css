@@ -15,6 +15,7 @@ a.uri-dereferencer-fetch {
     text-align: center;
     display: inline-flex;
     justify-content: space-between;
+    padding:0 0 0 20px;
 }
 
 a.uri-dereferencer-toggle:before,
