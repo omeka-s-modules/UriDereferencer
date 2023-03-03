@@ -4,6 +4,7 @@ namespace UriDereferencer;
 use Omeka\Module\AbstractModule;
 use Laminas\EventManager\Event;
 use Laminas\EventManager\SharedEventManagerInterface;
+use Laminas\Mvc\MvcEvent;
 
 class Module extends AbstractModule
 {
@@ -31,6 +32,15 @@ class Module extends AbstractModule
                 ],
             ],
         ];
+    }
+
+    public function onBootstrap(MvcEvent $event)
+    {
+        parent::onBootstrap($event);
+
+        // Add ACL rules for this module.
+        $acl = $this->getServiceLocator()->get('Omeka\Acl');
+        $acl->allow(null, 'UriDereferencer\Controller\Index');
     }
 
     public function attachListeners(SharedEventManagerInterface $sharedEventManager)
