@@ -7,6 +7,7 @@ i.loading:before {
     width: 1.2em;
     display: block;
     text-align: center;
+    font-weight: 900;
 }
 
 a.uri-dereferencer-toggle,
