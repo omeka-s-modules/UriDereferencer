@@ -13,6 +13,7 @@ i.loading:before {
 a.uri-dereferencer-toggle,
 a.uri-dereferencer-fetch {
     width: 1.5em;
+    display: inline-flex;
 }
 
 .uri-dereferencer-markup {
