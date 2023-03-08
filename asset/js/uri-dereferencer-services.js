@@ -80,7 +80,9 @@ UriDereferencer.addService({
         return 'LC Linked Data Service';
     },
     getOptions() {
-        return {};
+        // Must use the proxy because responses sent from LC don't include an
+        // Access-Control-Allow-Origin header.
+        return {'useProxy': true};
     },
     isMatch(uri) {
         return (null !== this.getMatch(uri));
@@ -468,7 +470,7 @@ UriDereferencer.addService({
     getMarkup(uri, text) {
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
-        const data = new Map();		
+        const data = new Map();
 		Object.keys(json).forEach(function(key) {
 			if (key!="geometries" && key!="uri" && json[key]!="null" && typeof json[key] === 'string') {
 				data.set(key, json[key]);
