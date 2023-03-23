@@ -116,7 +116,7 @@ UriDereferencer.addService({
                     altLabels.push(altLabel['@value']);
                 }
             }
-            if (altLabels) {
+            if (altLabels.length) {
                 data.set('Alt Label', altLabels.join('; '));
             }
         }
