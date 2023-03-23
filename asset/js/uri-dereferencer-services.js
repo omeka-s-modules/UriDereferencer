@@ -89,14 +89,18 @@ UriDereferencer.addService({
     },
     getResourceUrl(uri) {
         const match = this.getMatch(uri);
-        return `http://id.loc.gov/${match[1]}/${match[2]}/${match[3]}.json`;
+        return `https://id.loc.gov/${match[1]}/${match[2]}/${match[3]}.json`;
     },
     getMarkup(uri, text) {
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
         const index = json.findIndex(function(element) {
-            // The relevant data is indexed by the URI set on the @id.
-            return uri.replace(/\.html$/, '') == element['@id'];
+            // The relevant data is indexed by the URI set on the @id. Note that
+            // @id is always "http" even when requesting with "https". We have
+            // to account for this by removing both schemes before comparing.
+            const elementNoScheme = element['@id'].split('://').at(-1);
+            const uriNoScheme = uri.split('://').at(-1);
+            return uriNoScheme.replace(/\.html$/, '') == elementNoScheme;
         });
         const data = new Map();
         if (UriDereferencer.isset(() => json[index]['http://www.w3.org/2000/01/rdf-schema#label'][0]['@value'])) {
@@ -129,7 +133,7 @@ UriDereferencer.addService({
         return `<dl>${dataMarkup}</dl>`;
     },
     getMatch(uri) {
-        const re = new RegExp(`^http?:\/\/id\.loc\.gov\/(authorities|vocabulary|resources)\/(${this.authorities.join('|')}|${this.vocabularies.join('|')}|${this.resources.join('|')})\/(.+?)(\.html)?$`);
+        const re = new RegExp(`^https?:\/\/id\.loc\.gov\/(authorities|vocabulary|resources)\/(${this.authorities.join('|')}|${this.vocabularies.join('|')}|${this.resources.join('|')})\/(.+?)(\.html)?$`);
         return uri.match(re);
     }
 });
