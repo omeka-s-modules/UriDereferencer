@@ -16,9 +16,7 @@ UriDereferencer.addService({
         return `https://www.wikidata.org/wiki/Special:EntityData/${match[1]}.json`;
     },
     getMarkup(uri, text, lang) {
-        if (!lang) {
-            lang = 'en';
-        }
+        lang = lang ?? 'en';
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
         const data = new Map();
@@ -156,9 +154,7 @@ UriDereferencer.addService({
         return `http://dbpedia.org/data/${match[1]}.json`;
     },
     getMarkup(uri, text, lang) {
-        if (!lang) {
-            lang = 'en';
-        }
+        lang = lang ?? 'en';
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
         const data = new Map();
@@ -199,9 +195,7 @@ UriDereferencer.addService({
         return (null !== this.getMatch(uri));
     },
     getResourceUrl(uri, lang) {
-        if (!lang) {
-            lang = 'en';
-        }
+        lang = lang ?? 'en';
         // Note that Getty doesn't enable cross-origin resource sharing (CORS),
         // so we can't directly fetch the JSON representations. Use the SPARQL
         // endpoint instead.
@@ -441,9 +435,7 @@ UriDereferencer.addService({
         return `http://rdaregistry.info/termList/${match[1]}.jsonld`;
     },
     getMarkup(uri, text, lang) {
-        if (!lang) {
-            lang = 'en';
-        }
+        lang = lang ?? 'en';
         const match = this.getMatch(uri);
         const canonicalUri = `http://rdaregistry.info/termList/${match[1]}/${match[2]}`;
         const json = JSON.parse(text);

@@ -64,17 +64,19 @@ following interface and adding them to the global `UriDereferencer` object.
      * origin resource sharing (CORS) enabled.
      *
      * @param {string} uri The URI
+     * @param {string} lang The requested language (optional)
      * @return {string}
      */
-    getResourceUrl(uri) {},
+    getResourceUrl(uri, lang) {},
     /**
      * Get information about the resource in HTML markup.
      *
      * @param {string} uri The URI
      * @param {string} text The response text of the resource
+     * @param {string} lang The requested language (optional)
      * @return {string}
      */
-    getMarkup(uri, text) {}
+    getMarkup(uri, text, lang) {}
 }
 ```
 
@@ -100,16 +102,19 @@ UriDereferencer.addService({
     isMatch(uri) {
         return (null !== this.getMatch(uri));
     },
-    getResourceUrl(uri) {
+    getResourceUrl(uri, lang) {
         // This example assumes a JSON-LD resource. There are many possible
         // ways to dereference a URL, depending on the service (e.g. RDF/XML,
-        // SPARQL endpoint).
+        // SPARQL endpoint). Use lang only for services that accept a language
+        // paramater via the URL.
         const match = this.getMatch(uri);
-        return `http://example.com/vocab/${match[1]}.jsonld`;
+        lang = lang ?? 'en';
+        return `http://example.com/vocab/${match[1]}.jsonld?lang=${lang}`;
     },
-    getMarkup(uri, text) {
+    getMarkup(uri, text, lang) {
         // This example assumes JSON response text. You may need to parse the
-        // response text differently (e.g. XPath for XML).
+        // response text differently (e.g. XPath for XML). Use lang only for
+        // services that provide translations in their response content.
         const json = JSON.parse(text);
         return `
         <dl>
@@ -139,4 +144,3 @@ The Omeka name is a registered trademark of the Corporation for Digital Scholars
 Third-party copyright in this distribution is noted where applicable.
 
 All rights not expressly granted are reserved.
-
