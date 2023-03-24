@@ -46,16 +46,17 @@ const UriDereferencer = {
      * Dereference a URI and return the linked data markup.
      *
      * @param {string} uri The URI
+     * @param {string} lang The language
      * @return {Promise} A promise to return markup
      */
-    async dereference(uri) {
+    async dereference(uri, lang) {
         const service = this.getServiceByUri(uri);
         if (!service) {
             console.log(`No service found for URI "${uri}"`);
             return;
         }
         try {
-            const resourceUrl = this.getResourceUrlForService(uri, service);
+            const resourceUrl = this.getResourceUrlForService(uri, service, lang);
             if (!resourceUrl) {
                 throw new Error('Cannot determine resource URL');
             }
@@ -63,7 +64,7 @@ const UriDereferencer = {
             if (!response.ok) {
                 throw new Error(`HTTP Error ${response.status}`);
             }
-            return service.getMarkup(uri, await response.text());
+            return service.getMarkup(uri, await response.text(), lang);
         } catch (error) {
             console.log(`Error in service "${service.getName()}" using URI "${uri}": ${error.message}`);
             return;
@@ -88,10 +89,11 @@ const UriDereferencer = {
      *
      * @param {string} uri The URI
      * @param {object} service A linked data service object
+     * @param {object} lang The language
      * @return {string|false} Returns false if cannot determine resource URL
      */
-    getResourceUrlForService(uri, service) {
-        const resourceUrl = service.getResourceUrl(uri);
+    getResourceUrlForService(uri, service, lang) {
+        const resourceUrl = service.getResourceUrl(uri, lang);
         const options = service.getOptions();
         if (true !== options.useProxy) {
             return resourceUrl;

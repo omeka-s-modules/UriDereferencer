@@ -43,7 +43,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
         fetchButton.onclick = async function(e) {
             e.preventDefault();
             container.innerHTML = loading.outerHTML;
-            container.innerHTML = await UriDereferencer.dereference(uriValue.href);
+            container.innerHTML = await UriDereferencer.dereference(
+                uriValue.href,
+                uriValue.closest('.value').getAttribute('lang')
+            );
             container.focus();
             this.style.display = 'none';
             toggleButton.style.display = 'inline-flex';
