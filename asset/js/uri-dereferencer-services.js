@@ -13,18 +13,18 @@ UriDereferencer.addService({
     },
     getResourceUrl(uri) {
         const match = this.getMatch(uri);
-        return `https://www.wikidata.org/wiki/Special:EntityData/${match[1]}.json`;
+        return `https://www.wikidata.org/wiki/Special:EntityData/${match[2]}.json`;
     },
     getMarkup(uri, text, lang) {
         if (!lang) lang = 'en';
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
         const data = new Map();
-        if (UriDereferencer.isset(() => json['entities'][match[1]]['labels'][lang]['value'])) {
-            data.set('Label', json['entities'][match[1]]['labels'][lang]['value']);
+        if (UriDereferencer.isset(() => json['entities'][match[2]]['labels'][lang]['value'])) {
+            data.set('Label', json['entities'][match[2]]['labels'][lang]['value']);
         }
-        if (UriDereferencer.isset(() => json['entities'][match[1]]['descriptions'][lang]['value'])) {
-            data.set('Description', json['entities'][match[1]]['descriptions'][lang]['value']);
+        if (UriDereferencer.isset(() => json['entities'][match[2]]['descriptions'][lang]['value'])) {
+            data.set('Description', json['entities'][match[2]]['descriptions'][lang]['value']);
         }
         let dataMarkup = '';
         for (let [key, value] of data) {
@@ -33,7 +33,7 @@ UriDereferencer.addService({
         return `<dl>${dataMarkup}</dl>`;
     },
     getMatch(uri) {
-        return uri.match(/^https?:\/\/www\.wikidata\.org\/wiki\/(Q.+)/);
+        return uri.match(/^https?:\/\/www\.wikidata\.org\/(wiki|entity)\/(Q.+)/);
     }
 });
 UriDereferencer.addService({
