@@ -14,46 +14,35 @@ document.addEventListener('DOMContentLoaded', function(event) {
         // The toggle button.
         const toggleButton = document.createElement('a');
         toggleButton.className = 'uri-dereferencer-toggle';
-        toggleButton.href = '#';
-        toggleButton.innerHTML = '[–]';
         toggleButton.setAttribute('aria-controls', containerId);
-        toggleButton.setAttribute('aria-expanded', 'false');
-        toggleButton.style.display = 'none';
-        toggleButton.onclick = function(e) {
+        toggleButton.href = '#';
+        toggleButton.innerHTML = '[+]';
+        loading = document.createElement('i');
+        loading.className = 'loading';
+        toggleButton.onclick = async function(e) {
             e.preventDefault();
-            if ('none' === container.style.display) {
-                container.style.display = 'inline-flex';
-                container.focus();
-                this.innerHTML = '[–]';
-                this.setAttribute('aria-expanded', 'true');
+            if (container.classList.contains('open')) {
+                container.classList.remove('open');
+                toggleButton.innerHTML = '[+]';
+                toggleButton.setAttribute('aria-expanded', 'false');
             } else {
-                container.style.display = 'none';
-                this.innerHTML = '[+]';
-                this.setAttribute('aria-expanded', 'false');
+                container.classList.add('open');
+                container.focus();
+                toggleButton.innerHTML = '[–]';
+                toggleButton.setAttribute('aria-expanded', 'true');
+            }
+
+            // Only fetch the first time.
+            if (toggleButton.classList.contains('fetched') == false) {
+                container.innerHTML = loading.outerHTML;
+                container.innerHTML = await UriDereferencer.dereference(
+                    uriValue.href,
+                    uriValue.closest('.value').getAttribute('lang')
+                );
+                toggleButton.classList.add('fetched');
             }
         };
 
-        // The fetch button.
-        const fetchButton = document.createElement('a');
-        fetchButton.className = 'uri-dereferencer-fetch';
-        fetchButton.href = '#';
-        fetchButton.innerHTML = '[+]';
-        loading = document.createElement('i');
-        loading.className = 'loading';
-        fetchButton.onclick = async function(e) {
-            e.preventDefault();
-            container.innerHTML = loading.outerHTML;
-            container.innerHTML = await UriDereferencer.dereference(
-                uriValue.href,
-                uriValue.closest('.value').getAttribute('lang')
-            );
-            container.focus();
-            this.style.display = 'none';
-            toggleButton.style.display = 'inline-flex';
-            toggleButton.setAttribute('aria-expanded', 'true');
-        };
-
-        uriValue.parentNode.prepend(fetchButton);
         uriValue.parentNode.prepend(toggleButton);
         uriValue.parentNode.append(container);
     }

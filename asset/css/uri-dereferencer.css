@@ -18,4 +18,9 @@ a.uri-dereferencer-fetch {
 
 .uri-dereferencer-markup {
   width: 100%;
+  display: none;
+}
+
+.uri-dereferencer-markup.open {
+  display: inline-flex;
 }
