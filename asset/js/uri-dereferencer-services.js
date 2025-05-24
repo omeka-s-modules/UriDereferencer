@@ -395,7 +395,7 @@ UriDereferencer.addService({
     },
     getResourceUrl(uri) {
         const match = this.getMatch(uri);
-        return `http://id.worldcat.org/fast/${match[1]}/rdf.xml`;
+        return `http://id.worldcat.org/fast/${match[1]}.rdf.xml`;
     },
     getMarkup(uri, text) {
         const parser = new DOMParser();
