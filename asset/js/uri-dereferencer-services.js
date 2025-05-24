@@ -297,62 +297,76 @@ UriDereferencer.addService({
     },
     getOptions() {
         // Must use the proxy because responses sent from OCLC VIAF don't
-        // include an Access-Control-Allow-Origin header.
-        return {'useProxy': true};
+        // include an Access-Control-Allow-Origin header. Must use the cURL
+        // client adapter because the OCLC server doesn't accept requests from
+        // the default Socket adapter. Must request for JSON by setting the
+        // Accept header to "application/json".
+        return {
+            'useProxy': true,
+            'proxyAdapter': 'curl',
+            'acceptHeader': 'application/json'
+        };
     },
     isMatch(uri) {
         return (null !== this.getMatch(uri));
     },
     getResourceUrl(uri) {
         const match = this.getMatch(uri);
-        return `https://viaf.org/viaf/${match[1]}/viaf.json`;
+        return `https://viaf.org/viaf/${match[1]}`;
     },
     getMarkup(uri, text) {
         // Note that we're prioritizing Library of Congress (LC) as the source.
         const match = this.getMatch(uri);
         const json = JSON.parse(text);
         const data = new Map();
-        if (UriDereferencer.isset(() => json['mainHeadings']['data'])) {
+        if (UriDereferencer.isset(() => json['ns1:VIAFCluster']['ns1:mainHeadings']['ns1:data'])) {
             const headings = [];
-            for (let heading of json['mainHeadings']['data']) {
-                if (heading['sources']['s'].includes('LC')) {
-                    headings.push(heading['text']);
+            for (let heading of json['ns1:VIAFCluster']['ns1:mainHeadings']['ns1:data']) {
+                if (heading['ns1:sources']['ns1:s'].includes('LC')) {
+                    headings.push(heading['ns1:text']);
                 }
             }
             if (headings.length) {
                 data.set('Main headings', headings.join('; '));
             }
         }
-        if (UriDereferencer.isset(() => json['nameType'])) {
-            data.set('Name type', json['nameType']);
+        if (UriDereferencer.isset(() => json['ns1:VIAFCluster']['ns1:nameType'])) {
+            data.set('Name type', json['ns1:VIAFCluster']['ns1:nameType']);
         }
-        if (UriDereferencer.isset(() => json['fieldOfActivity']['data'])) {
-            let retrievedData = json['fieldOfActivity']['data'];
+        if (UriDereferencer.isset(() => json['ns1:VIAFCluster']['ns1:fieldOfActivity']['ns1:data'])) {
+            let retrievedData = json['ns1:VIAFCluster']['ns1:fieldOfActivity']['ns1:data'];
             if (!Array.isArray(retrievedData)) {
                 retrievedData = [retrievedData];
             }
             for (let fields of retrievedData) {
-                if ('LC' === fields['sources']['s']) {
-                    data.set('Field of activity', fields['text']);
+                if ('LC' === fields['ns1:sources']['ns1:s'] || fields['ns1:sources']['ns1:s'].includes('LC')) {
+                    data.set('Field of activity', fields['ns1:text']);
                 }
             }
         }
-        if (UriDereferencer.isset(() => json['occupation']['data'])) {
+        if (UriDereferencer.isset(() => json['ns1:VIAFCluster']['ns1:occupation']['ns1:data'])) {
             const occupations = [];
-            for (let occupation of json['occupation']['data']) {
-                if ('LC' === occupation['sources']['s']) {
-                    occupations.push(occupation['text']);
+            // Check that the data is iterable before iterating it.
+            if (Symbol.iterator in json['ns1:VIAFCluster']['ns1:occupation']['ns1:data']) {
+                for (let occupation of json['ns1:VIAFCluster']['ns1:occupation']['ns1:data']) {
+                    if ('LC' === occupation['ns1:sources']['ns1:s'] || occupation['ns1:sources']['ns1:s'].includes('LC')) {
+                        occupations.push(occupation['ns1:text']);
+                    }
                 }
             }
             if (occupations.length) {
                 data.set('Occupation', occupations.join('; '));
             }
         }
-        if (UriDereferencer.isset(() => json['birthDate'])) {
-            data.set('Birth date', json['birthDate']);
+        if (UriDereferencer.isset(() => json['ns1:VIAFCluster']['ns1:birthDate'])) {
+            if (json['ns1:VIAFCluster']['ns1:birthDate']) {
+                data.set('Birth date', json['ns1:VIAFCluster']['ns1:birthDate']);
+            }
         }
-        if (UriDereferencer.isset(() => json['deathDate'])) {
-            data.set('Death date', json['deathDate']);
+        if (UriDereferencer.isset(() => json['ns1:VIAFCluster']['ns1:deathDate'])) {
+            if (json['ns1:VIAFCluster']['ns1:deathDate']) {
+                data.set('Death date', json['ns1:VIAFCluster']['ns1:deathDate']);
+            }
         }
         let dataMarkup = '';
         for (let [key, value] of data) {
