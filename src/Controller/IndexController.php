@@ -2,6 +2,7 @@
 namespace UriDereferencer\Controller;
 
 use Laminas\Http\Client;
+use Laminas\Http\Client\Adapter\Curl;
 use Laminas\Mvc\Controller\AbstractActionController;
 
 class IndexController extends AbstractActionController
@@ -23,9 +24,17 @@ class IndexController extends AbstractActionController
     {
         $response = $this->getResponse();
         $resourceUrl = $this->params()->fromQuery('resource-url');
+        $adapter = $this->params()->fromQuery('adapter');
+        $acceptHeader = $this->params()->fromQuery('accept-header');
         if ('' === trim($resourceUrl)) {
             return $response->setStatusCode('400')
                 ->setContent('The query must include the resource-url parameter.');
+        }
+        if ('curl' === $adapter) {
+            $this->client->setAdapter(Curl::class);
+        }
+        if ($acceptHeader) {
+            $this->client->setHeaders(['Accept' => $acceptHeader]);
         }
         try {
             $serviceResponse = $this->client->setUri($resourceUrl)->send();

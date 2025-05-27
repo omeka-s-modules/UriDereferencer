@@ -99,7 +99,11 @@ const UriDereferencer = {
             return resourceUrl;
         }
         if (null !== this.proxyUrl) {
-            return `${this.proxyUrl}?resource-url=${encodeURIComponent(resourceUrl)}`;
+            const params = new URLSearchParams;
+            params.set('resource-url', resourceUrl);
+            params.set('adapter', options.proxyAdapter ?? '');
+            params.set('accept-header', options.acceptHeader ?? '');
+            return `${this.proxyUrl}?${params.toString()}`;
         }
         return false;
     },
